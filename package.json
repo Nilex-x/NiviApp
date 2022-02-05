@@ -1,0 +1,42 @@
+{
+  "name": "iss",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.5.8",
+    "@expo/metro-config": "^0.2.8",
+    "@react-native-async-storage/async-storage": "~1.15.0",
+    "@react-navigation/bottom-tabs": "^6.0.9",
+    "@react-navigation/native": "^6.0.6",
+    "@react-navigation/native-stack": "^6.2.5",
+    "date-fns": "^2.28.0",
+    "expo": "~44.0.0",
+    "expo-status-bar": "~1.2.0",
+    "graphql": "^16.3.0",
+    "graphql-tag": "^2.12.6",
+    "i18next": "^21.6.10",
+    "mobx": "^6.3.13",
+    "mobx-react-lite": "^3.2.3",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-i18next": "^11.15.3",
+    "react-native": "^0.64.3",
+    "react-native-progress": "^5.0.0",
+    "react-native-switch-selector": "^2.1.4",
+    "react-native-web": "0.17.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@types/react": "~17.0.21",
+    "@types/react-native": "~0.64.12",
+    "typescript": "~4.3.5"
+  },
+  "private": true
+}
