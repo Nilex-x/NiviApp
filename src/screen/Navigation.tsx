@@ -20,7 +20,7 @@ export const Navigation = () => {
         try {
             const token: string | null = await AsyncStorage.getItem("LoginToken")
             if (token) {
-                userInfo.login(token)
+                userInfo.login(token, false);
             }
         } catch (err) {
             console.log(err);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Modal, ActivityIndicator } from 'react-native';
 import Query from '../../Graphql/Query';
 import RootStore from '../../store/rootStore';
 import * as Progress from 'react-native-progress';
@@ -12,7 +12,7 @@ import Foundation from '@expo/vector-icons/Foundation';
 interface DropMenuType {
     list: Array<any>,
     title: String,
-    onClick: () => void
+    onClick: (infos: any) => void
 }
 
 const { userInfo } = RootStore.getInstance();
@@ -40,10 +40,10 @@ const DropDownActi: React.FC<DropMenuType> = ({ list, title, onClick }) => {
             </TouchableOpacity>
             {isOpen &&
                 <View style={styles.containerDrop}>
-                    <ScrollView style={{ height: 400 }} nestedScrollEnabled={true}>
+                    <ScrollView style={{ maxHeight: 400 }} nestedScrollEnabled={true}>
                         {list.length > 0 ?
                             list.map(element =>
-                                <TouchableOpacity key={element.title + element.salle + element.code_acti + element.timeline_end} style={styles.boxElem} onPress={onClick} >
+                                <TouchableOpacity key={element.title + element.salle + element.code_acti + element.timeline_end} style={styles.boxElem} onPress={() => onClick(element)} >
                                     <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>Title: </Text>{element.title}</Text>
                                     <Text><Text style={{ fontSize: 15, fontWeight: "bold" }}>Salle: </Text>{element.salle ? element.salle : "Non définie"}</Text>
                                 </TouchableOpacity>
@@ -85,10 +85,10 @@ const DropDownProject: React.FC<DropMenuType> = ({ list, title, onClick }) => {
             </TouchableOpacity>
             {isOpen &&
                 <View style={styles.containerDrop}>
-                    <ScrollView style={{ height: 400 }} nestedScrollEnabled={true}>
+                    <ScrollView style={{ maxHeight: 400 }} nestedScrollEnabled={true}>
                         {list.length > 0 ?
                             list.map(element =>
-                                <TouchableOpacity key={element.title + element.text} style={styles.boxElem} onPress={onClick} >
+                                <TouchableOpacity key={element.title + element.text} style={styles.boxElem} onPress={() => onClick(element)} >
                                     <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>Title: </Text>{element.title}</Text>
                                     <Progress.Bar progress={0.3} width={200} />
                                 </TouchableOpacity>
@@ -130,7 +130,7 @@ const DropDownNotes: React.FC<DropMenuType> = ({ list, title, onClick }) => {
             </TouchableOpacity>
             {isOpen &&
                 <View style={styles.containerDrop}>
-                    <ScrollView style={{ height: 400 }} nestedScrollEnabled={true}>
+                    <ScrollView style={{ maxHeight: 400 }} nestedScrollEnabled={true}>
                         {list.length > 0 ?
                             list.map(element =>
                                 <TouchableOpacity key={element.title + element.text} style={styles.boxElem} onPress={onClick} >
@@ -153,7 +153,7 @@ const DropDownNotes: React.FC<DropMenuType> = ({ list, title, onClick }) => {
     )
 }
 
-const DropDownHisto: React.FC<DropMenuType> = ({ list, title, onClick, setEnable }) => {
+const DropDownHisto: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
     const [isOpen, setOpen] = useState(false);
 
@@ -177,8 +177,8 @@ const DropDownHisto: React.FC<DropMenuType> = ({ list, title, onClick, setEnable
             {isOpen &&
                 <View style={styles.containerDrop}>
                     <ScrollView
-                    style={{ height: 400 }}
-                    nestedScrollEnabled={true}
+                        style={{ maxHeight: 400 }}
+                        nestedScrollEnabled={true}
                     >
                         {list.length > 0 ?
                             list.map(element => {
@@ -215,13 +215,13 @@ const HomePage = ({ navigation }: any) => {
     const [project, setProject] = useState([]);
     const [notes, setNotes] = useState([]);
     const [history, setHistory] = useState([]);
+    const [isRefreshingBooking, setRefreshBooking] = useState<boolean>(false);
 
     const getInfos = async () => {
         setLoading(true);
         try {
             const data = await queries.getBoard(userInfo.getToken())
             const infos: any = data?.data?.GetBoard;
-            console.log("info => ", infos.historys[0]);
             setActi(infos.activites);
             setProject(infos.projets);
             setNotes(infos.notes);
@@ -235,18 +235,42 @@ const HomePage = ({ navigation }: any) => {
 
     useEffect(() => {
         getInfos();
+        console.log(new Date().toISOString())
     }, [])
 
     return (
         <SafeAreaView style={{ backgroundColor: "#1C9FF0", width: '100%', height: '100%', flex: 1 }} >
-            <ScrollView>
-                <View>
-                    <DropDownActi list={acti} title={t("ACTI")} onClick={() => alert("click")} />
-                    <DropDownProject list={project} title={t("PROJ")} onClick={() => alert("click")} />
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isRefreshingBooking}
+                        onRefresh={() => {
+                            getInfos().finally(() => setRefreshBooking(false))
+                        }}
+                    />
+                }
+            >
+                <View style={{ margin: 10 }}>
+                    <DropDownActi list={acti} title={t("ACTI")} onClick={(infos) => navigation.navigate("ActiResume", { infos })} />
+                    <DropDownProject list={project} title={t("PROJ")} onClick={(infos) => navigation.navigate("ProjectResume", { infos })} />
                     <DropDownNotes list={notes} title={t("NOTE")} onClick={() => alert("click")} />
                     <DropDownHisto list={history} title={t("HISTO")} onClick={() => alert("click")} />
                 </View>
             </ScrollView>
+            <Modal
+                visible={isLoading}
+                transparent={true}
+            >
+                <View style={styles.centeredView}>
+                    <View>
+                        <View style={[styles.modalView, { width: '10%' }]}>
+                            <ActivityIndicator
+                                color="#1C9FF0"
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     )
 }

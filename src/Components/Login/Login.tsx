@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Modal, Linking, ActivityIndicator } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Modal, Linking, ActivityIndicator, Platform } from 'react-native';
 import Logo from "../../assets/ISS_Logo.png";
 import Query from '../../Graphql/Query';
 import RootStore from '../../store/rootStore';
@@ -20,20 +20,27 @@ const LoginPage = () => {
     const connectUser = async () => {
         if (clefAuth == "") {
             setEmpty(true);
+            setClefAuth("");
         } else {
-            setLoading(true);
-            let key = clefAuth;
-            if (clefAuth.includes("/")) {
-                key = clefAuth.substring(clefAuth.indexOf("auth-"));
+            try {
+                setLoading(true);
+                let key = clefAuth;
+                if (clefAuth.includes("/")) {
+                    key = clefAuth.substring(clefAuth.indexOf("auth-"));
+                }
+                const data = await queries.Login(key);
+                const user = data.data.Login;
+                if (user.login == "") {
+                    setEmpty(false);
+                } else {
+                    userInfo.login(key, true);
+                }
+                console.log("result =>", user);
+            } catch (err) {
+                console.log("graphQL error => ", err)
+                setEmpty(true);
+                setClefAuth("");
             }
-            const data = await queries.Login(key);
-            const user = data.data.Login;
-            if (user.login == "") {
-                setEmpty(false);
-            } else {
-                userInfo.login(key);
-            }
-            console.log("result =>", user);
         }
         setLoading(false);
     }
@@ -47,7 +54,7 @@ const LoginPage = () => {
             <ScrollView scrollEnabled={true}>
                 <View style={{ marginTop: 50, flex: 1, height: "100%" }}>
                     <Image source={Logo} width={20} height={20} style={{ alignSelf: "center" }} />
-                    <View style={styles.box}>
+                    <View style={Platform.OS == "ios" ? styles.iosBox : styles.androidBox}>
                         <Text>{t("LOGIN_TITLE")}</Text>
                         <TextInput
                             accessibilityLabel={t("KEY")}
@@ -86,7 +93,9 @@ const LoginPage = () => {
                     <View style={styles.centeredView}>
                         <View>
                             <View style={[styles.modalView, { width: '10%' }]}>
-                                <ActivityIndicator />
+                                <ActivityIndicator
+                                    color="#1C9FF0"
+                                />
                             </View>
                         </View>
                     </View>
@@ -103,7 +112,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    box: {
+    iosBox: {
         padding: 20,
         alignSelf: "center",
         width: "95%",
@@ -115,6 +124,18 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowOffset: { width: 10, height: 10 },
         shadowColor: 'black',
+        elevation: 2,
+    },
+    androidBox: {
+        padding: 20,
+        alignSelf: "center",
+        width: "95%",
+        height: 220,
+        marginTop: 40,
+        backgroundColor: "white",
+        alignItems: "center",
+        borderRadius: 10,
+        elevation: 10,
     },
     text: {
         marginTop: 10,

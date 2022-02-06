@@ -17,13 +17,17 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "buildNumber": "1.0.0",
+      "bundleIdentifier": "com.nilexx.ISS"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/Icon-App.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "versionCode": 1,
+      "package": "com.nilexx.ISS"
     },
     "web": {
       "favicon": "./src/assets/Icon-App.png"

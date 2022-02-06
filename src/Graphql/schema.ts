@@ -205,3 +205,59 @@ query LoginUser($KeyAuth: String!) {
     firstname
   }
 }`
+
+export const GET_DAY_EVENT = gql`
+query GetDayEvent($KeyAuth: String!, $end: String!, $start: String!) {
+  GetDayEvent(KeyAuth: $KeyAuth, end: $end, start: $start) {
+    scolaryear
+    codemodule
+    codeevent
+    codeinstance
+    codeacti
+    semester
+    titlemodule
+    acti_title
+    start
+    end
+    total_students_registered
+    type_title
+    type_code
+    title
+    is_rdv
+    allowed_planning_start
+    nb_hours
+    allowed_planning_end
+    salle
+    nb_max_students_projet
+    nb_group
+    nb_seat
+    module_available
+    module_registered
+    past
+    allow_register
+    event_registered
+    project
+  }
+}`
+
+export const GET_PROJECT_DETAILS = gql`
+query GetProjectDetails($KeyAuth: String!, $codeActi: String, $codeinstance: String!, $codemodule: String!, $scolaryear: String!) {
+  GetProjectDetails(KeyAuth: $KeyAuth, codeActi: $codeActi, codeinstance: $codeinstance, codemodule: $codemodule, scolaryear: $scolaryear) {
+    begin
+    start
+    title
+    description
+    end
+    register
+    scolaryear
+    codemodule
+    codeinstance
+    codeacti
+    registered {
+      login
+      name
+      promo
+      picture
+    }
+  }
+}`

@@ -1,6 +1,19 @@
 import { action, makeObservable, observable } from "mobx";
 import RootStore from "./rootStore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as LocalAuthentication from 'expo-local-authentication';
+
+const getAuth = async () => {
+    const isCan = await LocalAuthentication.isEnrolledAsync();
+    if (isCan) {
+        const { success } = await LocalAuthentication.authenticateAsync({ promptMessage: "nice move" });
+        console.log("value Auth => ", success);
+        if (!success) {
+            return false;
+        }
+    }
+    return true;
+}
 
 export default class userInfo {
     isLoggedIn: Boolean = false;
@@ -27,8 +40,14 @@ export default class userInfo {
         return this.isLoggedIn
     }
 
-    login = async (newToken: string) => {
-        AsyncStorage.setItem("LoginToken", newToken)
+    login = async (newToken: string, firstConnect: boolean) => {
+        if (!firstConnect) {
+            if (!await getAuth()) {
+                this.logout();
+                return;
+            }
+        }
+        AsyncStorage.setItem("LoginToken", newToken);
         this.isLoggedIn = true;
         this.token = newToken;
     }

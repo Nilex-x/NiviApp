@@ -1,10 +1,14 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import ActiResumePage from "./ActiResume";
 import Home from "./Home";
+import ProjectResumePage from "./ProjectResume";
 
 type HomeParamList = {
     Home: undefined;
+    ActiResume: undefined;
+    ProjectResume: undefined;
 };
 
 const Stack = createNativeStackNavigator<HomeParamList>();
@@ -20,6 +24,34 @@ const HomeStack: React.FC<BookingStackProps> = () => {
         component={Home}
         options={{
           title: t("HEADER_HOME"),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#1C9FF0",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="ActiResume"
+        component={ActiResumePage}
+        options={{
+          title: t("HEADER_HOME_ACTI"),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#1C9FF0",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="ProjectResume"
+        component={ProjectResumePage}
+        options={{
+          title: t("HEADER_HOME_PROJ"),
           headerStyle: {
             backgroundColor: "#fff",
           },

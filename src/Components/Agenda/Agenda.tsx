@@ -1,21 +1,76 @@
-import { keys } from 'mobx';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Modal, Linking, ActivityIndicator } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Modal, Linking, ActivityIndicator, Dimensions } from 'react-native';
 import Query from '../../Graphql/Query';
 import RootStore from '../../store/rootStore';
+import EventCalendar from 'react-native-events-calendar';
+import addDays from 'date-fns/addDays';
 
 const { userInfo } = RootStore.getInstance();
+
+let { width } = Dimensions.get('window')
+
+const events = [
+    { start: '2022-02-05 14:30:00', end: '2022-02-05 15:30:00', title: 'Dr. Mariana Joseph', summary: '3412 Piedmont Rd NE, GA 3032' },
+]
 
 const AgendaPage = () => {
     const queries = new Query();
     const { t, i18n } = useTranslation();
+    const [dateSelected, setDateSelected] = useState<string>(new Date().toISOString().split('T')[0])
+    const [isLoading, setLoading] = useState<boolean>(true);
+    const [acti, setActi] = useState([])
+
+    const getDayEvent = async () => {
+        try {
+            const data = await queries.getDayEvent(userInfo.getToken(), dateSelected, addDays(new Date(dateSelected), 1).toISOString().split('T')[0])
+            const event = data?.data?.GetDayEvent;
+            console.log("event => ", event);
+            const newEvent = event.map(element => {
+                return ({
+                    start: element.start,
+                    end: element.end,
+                    title: element?.titlemodule + " >> " + element?.acti_title,
+                    summary: element.salle
+                })
+            })
+            setActi(newEvent);
+        } catch (err) {
+            console.log("graphQL error => ", err, JSON.stringify(err, null, 2));
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        getDayEvent();
+    }, [])
+    
+    useEffect(() => {
+        console.warn("pute => ", dateSelected)
+        getDayEvent();
+    }, [dateSelected])
 
     return (
-        <SafeAreaView style={{ backgroundColor: "#1C9FF0", width: '100%', height: '100%', flex: 1 }} >
-            <ScrollView>
-                <Text>Agenda</Text>
-            </ScrollView>
+        <SafeAreaView style={{ width: '100%', height: '100%', flex: 1 }} >
+            <EventCalendar
+                events={acti}
+                width={width}
+                format24h={true}
+                start={8}
+                end={22}
+                initDate={"2022-02-07"}
+                onDateChanged
+                dateChanged={(date: string) => console.warn(date)}
+                style={ {
+                    container: {
+                        backgroundColor: 'white'
+                    }, 
+                    event: {
+                        opacity: 0
+                    }
+                }}
+            />
         </SafeAreaView>
     )
 }

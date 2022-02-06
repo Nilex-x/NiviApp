@@ -1,4 +1,5 @@
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -119,7 +120,7 @@ export type ActivitesBoard = {
   timeline_start: Scalars['String'];
   timeline_end: Scalars['String'];
   timeline_barre: Scalars['Float'];
-  salle: Maybe<Scalars['String']>;
+  salle?: Maybe<Scalars['String']>;
   registerLink: Scalars['String'];
 };
 
@@ -217,6 +218,21 @@ export type ActiType = {
   events?: Maybe<Array<EventType>>;
 };
 
+export type Project = {
+  __typename?: 'Project';
+  scolaryear: Scalars['String'];
+  codemodule: Scalars['String'];
+  codeinstance: Scalars['String'];
+  codeacti: Scalars['String'];
+  begin?: Maybe<Scalars['String']>;
+  start?: Maybe<Scalars['String']>;
+  end?: Maybe<Scalars['String']>;
+  register?: Maybe<Scalars['Boolean']>;
+  title: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  registered?: Maybe<Array<User>>;
+};
+
 export type Query = {
   __typename?: 'Query';
   Login: User;
@@ -225,7 +241,9 @@ export type Query = {
   GetActiDetail: ActiType;
   GetUserInfo: User;
   GetBoard: Board;
+  GetProjectDetails: Project;
   GetPlanning: Array<Maybe<Planning>>;
+  GetDayEvent: Array<Maybe<Planning>>;
 };
 
 
@@ -246,7 +264,7 @@ export type QueryGetModuleDetailArgs = {
   scolaryear: Scalars['String'];
   codemodule: Scalars['String'];
   codeinstance: Scalars['String'];
-  codeActi?: Maybe<Scalars['String']>;
+  codeActi?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -255,7 +273,7 @@ export type QueryGetActiDetailArgs = {
   scolaryear: Scalars['String'];
   codemodule: Scalars['String'];
   codeinstance: Scalars['String'];
-  codeActi?: Maybe<Scalars['String']>;
+  codeActi?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -269,6 +287,22 @@ export type QueryGetBoardArgs = {
 };
 
 
+export type QueryGetProjectDetailsArgs = {
+  KeyAuth: Scalars['String'];
+  scolaryear: Scalars['String'];
+  codemodule: Scalars['String'];
+  codeinstance: Scalars['String'];
+  codeActi?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryGetPlanningArgs = {
   KeyAuth: Scalars['String'];
+};
+
+
+export type QueryGetDayEventArgs = {
+  KeyAuth: Scalars['String'];
+  start: Scalars['String'];
+  end: Scalars['String'];
 };
