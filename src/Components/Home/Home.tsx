@@ -8,6 +8,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Octicons from '@expo/vector-icons/Octicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Foundation from '@expo/vector-icons/Foundation';
+import format from 'date-fns/format';
 
 interface DropMenuType {
     list: Array<any>,
@@ -20,6 +21,8 @@ const { userInfo } = RootStore.getInstance();
 const DropDownActi: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
     const [isOpen, setOpen] = useState(false)
+
+    console.log("list =>", list)
 
     return (
         <View style={styles.box}>
@@ -40,12 +43,18 @@ const DropDownActi: React.FC<DropMenuType> = ({ list, title, onClick }) => {
             </TouchableOpacity>
             {isOpen &&
                 <View style={styles.containerDrop}>
-                    <ScrollView style={{ maxHeight: 400 }} nestedScrollEnabled={true}>
+                    <ScrollView
+                        style={{ maxHeight: 400 }}
+                        nestedScrollEnabled={true}
+                        showsVerticalScrollIndicator={false}
+                    >
                         {list.length > 0 ?
                             list.map(element =>
                                 <TouchableOpacity key={element.title + element.salle + element.code_acti + element.timeline_end} style={styles.boxElem} onPress={() => onClick(element)} >
                                     <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>Title: </Text>{element.title}</Text>
-                                    <Text><Text style={{ fontSize: 15, fontWeight: "bold" }}>Salle: </Text>{element.salle ? element.salle : "Non définie"}</Text>
+                                    <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>Salle: </Text>{element.salle ? element.salle : "Non définie"}</Text>
+                                    <Text style={{ marginBottom: 10 }} ><Text style={{ fontSize: 15, fontWeight: "bold" }}>De: </Text>{format(new Date(element.timeline_start), "dd/MM/yyyy - HH:mm")}</Text>
+                                    <Text><Text style={{ fontSize: 15, fontWeight: "bold" }}>A: </Text>{format(new Date(element.timeline_end), "dd/MM/yyyy - HH:mm")}</Text>
                                 </TouchableOpacity>
                             )
                             :
@@ -85,7 +94,11 @@ const DropDownProject: React.FC<DropMenuType> = ({ list, title, onClick }) => {
             </TouchableOpacity>
             {isOpen &&
                 <View style={styles.containerDrop}>
-                    <ScrollView style={{ maxHeight: 400 }} nestedScrollEnabled={true}>
+                    <ScrollView
+                        style={{ maxHeight: 400 }}
+                        nestedScrollEnabled={true}
+                        showsVerticalScrollIndicator={false}
+                    >
                         {list.length > 0 ?
                             list.map(element =>
                                 <TouchableOpacity key={element.title + element.text} style={styles.boxElem} onPress={() => onClick(element)} >
@@ -130,7 +143,11 @@ const DropDownNotes: React.FC<DropMenuType> = ({ list, title, onClick }) => {
             </TouchableOpacity>
             {isOpen &&
                 <View style={styles.containerDrop}>
-                    <ScrollView style={{ maxHeight: 400 }} nestedScrollEnabled={true}>
+                    <ScrollView
+                        style={{ maxHeight: 400 }}
+                        nestedScrollEnabled={true}
+                        showsVerticalScrollIndicator={false}
+                    >
                         {list.length > 0 ?
                             list.map(element =>
                                 <TouchableOpacity key={element.title + element.text} style={styles.boxElem} onPress={onClick} >
@@ -177,8 +194,9 @@ const DropDownHisto: React.FC<DropMenuType> = ({ list, title, onClick }) => {
             {isOpen &&
                 <View style={styles.containerDrop}>
                     <ScrollView
-                        style={{ maxHeight: 400 }}
+                        style={{ maxHeight: 420 }}
                         nestedScrollEnabled={true}
+                        showsVerticalScrollIndicator={false}
                     >
                         {list.length > 0 ?
                             list.map(element => {
@@ -249,6 +267,7 @@ const HomePage = ({ navigation }: any) => {
                         }}
                     />
                 }
+                showsVerticalScrollIndicator={false}
             >
                 <View style={{ margin: 10 }}>
                     <DropDownActi list={acti} title={t("ACTI")} onClick={(infos) => navigation.navigate("ActiResume", { infos })} />

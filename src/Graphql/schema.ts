@@ -177,7 +177,6 @@ export const GET_ACTI_DETAIL = gql`
       rdv_status
       archive
       nb_planified
-      student_registered
       events {
         code
         seats
@@ -187,6 +186,7 @@ export const GET_ACTI_DETAIL = gql`
         begin
         end
         location
+        registed
         resp {
           title
           picture
@@ -261,3 +261,15 @@ query GetProjectDetails($KeyAuth: String!, $codeActi: String, $codeinstance: Str
     }
   }
 }`
+
+export const REGISTER_ACTI = gql`
+mutation RegisterActi($keyAuth: String!, $scolaryear: String!, $codemodule: String!, $codeinstance: String!, $codeActi: String!, $codeEvent: String!) {
+  RegisterActi(KeyAuth: $keyAuth, scolaryear: $scolaryear, codemodule: $codemodule, codeinstance: $codeinstance, codeActi: $codeActi, codeEvent: $codeEvent)
+}
+`
+
+export const UNREGISTER_ACTI = gql`
+mutation UnregisterActi($keyAuth: String!, $scolaryear: String!, $codemodule: String!, $codeinstance: String!, $codeActi: String!, $codeEvent: String!) {
+  UnregisterActi(KeyAuth: $keyAuth, scolaryear: $scolaryear, codemodule: $codemodule, codeinstance: $codeinstance, codeActi: $codeActi, codeEvent: $codeEvent)
+}
+`

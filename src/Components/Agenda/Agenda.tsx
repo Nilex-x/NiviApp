@@ -11,7 +11,7 @@ const { userInfo } = RootStore.getInstance();
 let { width } = Dimensions.get('window')
 
 const events = [
-    { start: '2022-02-05 14:30:00', end: '2022-02-05 15:30:00', title: 'Dr. Mariana Joseph', summary: '3412 Piedmont Rd NE, GA 3032' },
+    { start: '2022-02-17 14:30:00', end: '2022-02-17 15:30:00', title: 'Dr. Mariana Joseph', summary: '3412 Piedmont Rd NE, GA 3032' },
 ]
 
 const AgendaPage = () => {
@@ -23,9 +23,9 @@ const AgendaPage = () => {
 
     const getDayEvent = async () => {
         try {
-            const data = await queries.getDayEvent(userInfo.getToken(), dateSelected, addDays(new Date(dateSelected), 1).toISOString().split('T')[0])
-            const event = data?.data?.GetDayEvent;
-            console.log("event => ", event);
+            const data = await queries.getPlanning(userInfo.getToken());
+            const event = data?.data?.GetPlanning;
+            // console.log("event => ", event);
             const newEvent = event.map(element => {
                 return ({
                     start: element.start,
@@ -43,34 +43,31 @@ const AgendaPage = () => {
     }
 
     useEffect(() => {
+        console.log("update");
         getDayEvent();
     }, [])
-    
-    useEffect(() => {
-        console.warn("pute => ", dateSelected)
-        getDayEvent();
-    }, [dateSelected])
 
     return (
         <SafeAreaView style={{ width: '100%', height: '100%', flex: 1 }} >
-            <EventCalendar
-                events={acti}
-                width={width}
-                format24h={true}
-                start={8}
-                end={22}
-                initDate={"2022-02-07"}
-                onDateChanged
-                dateChanged={(date: string) => console.warn(date)}
-                style={ {
-                    container: {
-                        backgroundColor: 'white'
-                    }, 
-                    event: {
-                        opacity: 0
-                    }
-                }}
-            />
+                <EventCalendar
+                    events={acti}
+                    width={width}
+                    format24h={true}
+                    start={8}
+                    end={22}
+                    initDate={dateSelected}
+                    onDateChanged
+                    dateChanged={(date: string) => console.warn(date)}
+                    scrollToFirst={true}
+                    style={ {
+                        container: {
+                            backgroundColor: 'white'
+                        }, 
+                        event: {
+                            opacity: 0.01
+                        }
+                    }}
+                />
         </SafeAreaView>
     )
 }

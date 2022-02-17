@@ -17,6 +17,8 @@ const en: base = {
     "ACTI_REGISTED": "Registered",
     "ACTI_ROOM": "Room",
     "ACTI_REGISTER": "Register",
+    "ACTI_ALREADY_R": "Already register",
+    "ACTI_ALREADY_U": "Already unregister",
     "DECONNECT": "Logout",
     "ACTI": "Activities",
     "PROJ": "Projects",
@@ -32,6 +34,8 @@ const en: base = {
     "EN": "English",
     "CONTINUE": "Continue",
     "BACK": "Back",
+    "REGISTER": "register",
+    "UNREGISTER": "unregister"
 }
 
 export default en;

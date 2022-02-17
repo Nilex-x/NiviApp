@@ -20,6 +20,8 @@ export type base = {
     ACTI_ROOM: string;
     ACTI_REGISTED: string;
     ACTI_REGISTER: string;
+    ACTI_ALREADY_R: string;
+    ACTI_ALREADY_U: string;
 
     // Home
     ACTI: string;
@@ -43,4 +45,6 @@ export type base = {
     EN: string;
     CONTINUE: string;
     BACK: string;
+    REGISTER: string;
+    UNREGISTER: string;
 }

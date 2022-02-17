@@ -59,21 +59,21 @@ const ProjectResumePage = (props) => {
                         <View style={styles.box}>
                             <Text style={styles.titleInfo}>Étudiant</Text>
                             <View style={styles.containerDrop}>
-                                <ScrollView style={{ maxHeight: 420 }} nestedScrollEnabled={true}>
+                                <ScrollView
+                                    style={{ maxHeight: 420 }}
+                                    nestedScrollEnabled={true}
+                                    showsVerticalScrollIndicator={false}
+                                >
                                     {detail?.registered.length > 0 ?
                                         detail?.registered.map(element =>
                                             <View key={element.begin + element.end} style={styles.boxElem} >
-                                                <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{(t("ACTI_AT"))}: </Text>{format(new Date(element.begin), "dd/MM/yyyy - HH:mm")}</Text>
-                                                <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_UNTIL")}: </Text>{format(new Date(element.end), "dd/MM/yyyy - HH:mm")}</Text>
-                                                <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_ROOM")}: </Text>{element.location ? element.location : "Non définie"}</Text>
-                                                <Text><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_REGISTED")}: </Text>{element.nb_inscrits}</Text>
-                                                <Button title={t("ACTI_REGISTER")} onClick={() => alert("register")} styleButton={{ width: '100%' }} />
+                                                <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>Nom: </Text>{element.name}</Text>
                                             </View>
                                         )
                                         :
                                         <View style={styles.boxElem} >
                                             <Text>
-                                                Aucun Session
+                                                Aucun inscrit
                                             </Text>
                                         </View>
                                     }

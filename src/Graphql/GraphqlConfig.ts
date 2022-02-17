@@ -17,7 +17,7 @@ export default class GQLClient {
     constructor() {
 
         this.client = new ApolloClient({
-            uri: "http://192.168.1.21:4000/",
+            uri: "http://10.15.193.3:4000/",
             cache: new InMemoryCache(),
         });
     }

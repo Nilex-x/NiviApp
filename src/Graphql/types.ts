@@ -42,10 +42,10 @@ export type Module = {
 
 export type Student = {
   __typename?: 'Student';
-  login: Scalars['String'];
-  name: Scalars['String'];
-  picture: Scalars['String'];
-  promo: Scalars['Int'];
+  login?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['String']>;
+  promo?: Maybe<Scalars['Int']>;
 };
 
 export type Resp = {
@@ -230,7 +230,7 @@ export type Project = {
   register?: Maybe<Scalars['Boolean']>;
   title: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  registered?: Maybe<Array<User>>;
+  registered?: Maybe<Array<Student>>;
 };
 
 export type Query = {
@@ -305,4 +305,50 @@ export type QueryGetDayEventArgs = {
   KeyAuth: Scalars['String'];
   start: Scalars['String'];
   end: Scalars['String'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  RegisterActi: Scalars['String'];
+  UnregisterActi: Scalars['String'];
+  RegisterProject: Scalars['String'];
+  UnregisterProject: Scalars['String'];
+};
+
+
+export type MutationRegisterActiArgs = {
+  KeyAuth: Scalars['String'];
+  scolaryear: Scalars['String'];
+  codemodule: Scalars['String'];
+  codeinstance: Scalars['String'];
+  codeActi: Scalars['String'];
+  codeEvent: Scalars['String'];
+};
+
+
+export type MutationUnregisterActiArgs = {
+  KeyAuth: Scalars['String'];
+  scolaryear: Scalars['String'];
+  codemodule: Scalars['String'];
+  codeinstance: Scalars['String'];
+  codeActi: Scalars['String'];
+  codeEvent: Scalars['String'];
+};
+
+
+export type MutationRegisterProjectArgs = {
+  KeyAuth: Scalars['String'];
+  scolaryear: Scalars['String'];
+  codemodule: Scalars['String'];
+  codeinstance: Scalars['String'];
+  codeActi: Scalars['String'];
+};
+
+
+export type MutationUnregisterProjectArgs = {
+  KeyAuth: Scalars['String'];
+  scolaryear: Scalars['String'];
+  codemodule: Scalars['String'];
+  codeinstance: Scalars['String'];
+  codeActi: Scalars['String'];
 };

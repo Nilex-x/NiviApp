@@ -10,11 +10,13 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Foundation from '@expo/vector-icons/Foundation';
 import format from 'date-fns/format';
 import Button from '../Utils/Button';
+import Mutate from '../../Graphql/Mutation';
 
 const { userInfo } = RootStore.getInstance();
 
 const ActiResumePage = (props) => {
     const queries = new Query();
+    const mutate = new Mutate();
     const { t } = useTranslation();
     const [isLoading, setLoading] = useState(false);
     const [isRefreshingBooking, setRefreshBooking] = useState<boolean>(false);
@@ -22,6 +24,11 @@ const ActiResumePage = (props) => {
         events: [],
         description: "",
     });
+    const [modalConfig, setModalConfig] = useState({
+        isVisible: false,
+        text: ""
+    })
+
     const infos = props.route.params.infos;
 
     const getDetail = async () => {
@@ -32,9 +39,48 @@ const ActiResumePage = (props) => {
             console.log("detail =>", details);
             setDetails(details)
         } catch (err) {
-            console.log("GraphQL error", err);
+            console.log("GraphQL error", err, JSON.stringify(err, null, 2));
         } finally {
             setLoading(false);
+        }
+    }
+
+    const unregister = async (codeEvent: string) => {
+        console.log("nice", codeEvent)
+        try {
+            const data = await mutate.UnregisterActi(userInfo.getToken(), infos.scolaryear, infos.code_module, infos.codeinstance, infos.code_acti, codeEvent);
+            const response = data?.data?.UnregisterActi;
+
+            if (response == "Unregister") {
+                getDetail();
+            } else {
+                setModalConfig({
+                    isVisible: true,
+                    text: t("ACTI_ALREADY_U")
+                })
+            }
+        } catch (err) {
+            console.log("graphQL error =>", JSON.stringify(err, null, 2));
+        }
+    }
+
+    const register = async (codeEvent: string) => {
+        try {
+            const data = await mutate.RegisterActi(userInfo.getToken(), infos.scolaryear, infos.code_module, infos.codeinstance, infos.code_acti, codeEvent);
+            const response = data?.data?.RegisterActi;
+
+            console.log("response =>", response);
+
+            if (response == "Register") {
+                getDetail();
+            } else {
+                setModalConfig({
+                    isVisible: true,
+                    text: t("ACTI_ALREADY_R")
+                })
+            }
+        } catch (err) {
+            console.log("graphQL error =>", JSON.stringify(err, null, 2));
         }
     }
 
@@ -45,7 +91,16 @@ const ActiResumePage = (props) => {
     return (
         <SafeAreaView style={{ backgroundColor: "#1C9FF0", width: '100%', height: '100%', flex: 1 }} >
             {!isLoading &&
-                <ScrollView>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isRefreshingBooking}
+                            onRefresh={() => {
+                                getDetail().finally(() => setRefreshBooking(false))
+                            }}
+                        />
+                    }
+                >
                     <View style={{ margin: 10 }}>
                         <View style={styles.box}>
                             <Text style={styles.titleInfo}>{detail?.title}</Text>
@@ -59,7 +114,7 @@ const ActiResumePage = (props) => {
                         <View style={styles.box}>
                             <Text style={styles.titleInfo}>Session</Text>
                             <View style={styles.containerDrop}>
-                                <ScrollView style={{ maxHeight: 420 }} nestedScrollEnabled={true}>
+                                <ScrollView style={{ maxHeight: 420 }} nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
                                     {detail?.events.length > 0 ?
                                         detail?.events.map(element =>
                                             <View key={element.begin + element.end} style={styles.boxElem} >
@@ -67,7 +122,11 @@ const ActiResumePage = (props) => {
                                                 <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_UNTIL")}: </Text>{format(new Date(element.end), "dd/MM/yyyy - HH:mm")}</Text>
                                                 <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_ROOM")}: </Text>{element.location ? element.location : "Non définie"}</Text>
                                                 <Text><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_REGISTED")}: </Text>{element.nb_inscrits}</Text>
-                                                <Button title={t("ACTI_REGISTER")} onClick={() => alert("register")} styleButton={{ width: '100%' }} />
+                                                {element?.registed ?
+                                                    <Button title={t("UNREGISTER")} onClick={() => unregister(element.code)} styleButton={{ width: '100%' }} />
+                                                    :
+                                                    <Button title={t("REGISTER")} onClick={() => register(element.code)} styleButton={{ width: '100%' }} />
+                                                }
                                             </View>
                                         )
                                         :
@@ -84,16 +143,24 @@ const ActiResumePage = (props) => {
                 </ScrollView>
             }
             <Modal
-                visible={isLoading}
+                visible={isLoading || modalConfig.isVisible}
                 transparent={true}
             >
                 <View style={styles.centeredView}>
                     <View>
-                        <View style={[styles.modalView, { width: '10%' }]}>
-                            <ActivityIndicator
-                                color="#1C9FF0"
-                            />
-                        </View>
+                        {isLoading &&
+                            <View style={[styles.modalView, { width: '10%' }]}>
+                                <ActivityIndicator
+                                    color="#1C9FF0"
+                                />
+                            </View>
+                        }
+                        {modalConfig.isVisible &&
+                            <View style={[styles.modalView, { width: '100%' }]}>
+                                <Text style={{ fontSize: 20, fontWeight: "bold", alignSelf: "center", marginBottom: 10 }} >{modalConfig.text}</Text>
+                                <Button title={t("BACK")} onClick={() => setModalConfig({ isVisible: false, text: "" })} styleButton={{ minWidth: '70%' }} />
+                            </View>
+                        }
                     </View>
                 </View>
             </Modal>

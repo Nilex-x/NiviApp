@@ -17,6 +17,8 @@ const fr :base = {
     "ACTI_REGISTED": "Inscrit",
     "ACTI_ROOM": "Salle",
     "ACTI_REGISTER": "S'inscrire",
+    "ACTI_ALREADY_R": "Déjà inscrit",
+    "ACTI_ALREADY_U": "Déjà désinscrit",
     "DECONNECT": "Déconnection",
     "ACTI": "Activités",
     "PROJ": "Projets",
@@ -32,6 +34,8 @@ const fr :base = {
     "EN": "Anglais",
     "CONTINUE": "Continuer",
     "BACK": "Retour",
+    "REGISTER": "S'inscrire",
+    "UNREGISTER": "Se désinscrire",
 }
 
 export default fr;
