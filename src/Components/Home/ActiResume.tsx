@@ -36,7 +36,7 @@ const ActiResumePage = (props) => {
         try {
             const data = await queries.getActiDetail(userInfo.getToken(), infos.scolaryear, infos.code_module, infos.codeinstance, infos.code_acti);
             const details = data?.data?.GetActiDetail;
-            console.log("detail =>", details);
+            // console.log("detail =>", details);
             setDetails(details)
         } catch (err) {
             console.log("GraphQL error", err, JSON.stringify(err, null, 2));
@@ -46,7 +46,7 @@ const ActiResumePage = (props) => {
     }
 
     const unregister = async (codeEvent: string) => {
-        console.log("nice", codeEvent)
+        // console.log("nice", codeEvent)
         try {
             const data = await mutate.UnregisterActi(userInfo.getToken(), infos.scolaryear, infos.code_module, infos.codeinstance, infos.code_acti, codeEvent);
             const response = data?.data?.UnregisterActi;
@@ -69,7 +69,7 @@ const ActiResumePage = (props) => {
             const data = await mutate.RegisterActi(userInfo.getToken(), infos.scolaryear, infos.code_module, infos.codeinstance, infos.code_acti, codeEvent);
             const response = data?.data?.RegisterActi;
 
-            console.log("response =>", response);
+            // console.log("response =>", response);
 
             if (response == "Register") {
                 getDetail();

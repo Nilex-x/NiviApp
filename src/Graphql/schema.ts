@@ -35,8 +35,8 @@ export const GET_USER_INFO = gql`
 }`
 
 export const GET_MODULE_DETAIL = gql`
-  query Query($KeyAuth: String!, $scolaryear: String!, $codemodule: String!, $codeinstance: String!, $codeActi: String) {
-  GetModuleDetail(KeyAuth: $KeyAuth, scolaryear: $scolaryear, codemodule: $codemodule, codeinstance: $codeinstance, codeActi: $codeActi) {
+  query Query($KeyAuth: String!, $scolaryear: String!, $codemodule: String!, $codeinstance: String!) {
+  GetModuleDetail(KeyAuth: $KeyAuth, scolaryear: $scolaryear, codemodule: $codemodule, codeinstance: $codeinstance) {
     title
     end_register
     closed
@@ -271,5 +271,22 @@ mutation RegisterActi($keyAuth: String!, $scolaryear: String!, $codemodule: Stri
 export const UNREGISTER_ACTI = gql`
 mutation UnregisterActi($keyAuth: String!, $scolaryear: String!, $codemodule: String!, $codeinstance: String!, $codeActi: String!, $codeEvent: String!) {
   UnregisterActi(KeyAuth: $keyAuth, scolaryear: $scolaryear, codemodule: $codemodule, codeinstance: $codeinstance, codeActi: $codeActi, codeEvent: $codeEvent)
+}
+`
+
+export const GET_MODULES = gql`
+query GetModules($keyAuth: String!) {
+  GetModules(KeyAuth: $keyAuth) {
+    scolaryear
+    codeinstance
+    semester
+    end
+    begin
+    code
+    title
+    credits
+    open
+    status
+  }
 }
 `

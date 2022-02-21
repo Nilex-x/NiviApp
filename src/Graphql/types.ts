@@ -24,6 +24,8 @@ export type User = {
   credits: Scalars['Int'];
   gpa: Scalars['String'];
   scolaryear: Scalars['String'];
+  location: Scalars['String'];
+  course: Scalars['String'];
 };
 
 export type Module = {
@@ -189,6 +191,7 @@ export type EventType = {
   end?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   user_status?: Maybe<Scalars['String']>;
+  registed: Scalars['Boolean'];
   resp?: Maybe<Array<Resp>>;
 };
 
@@ -214,7 +217,6 @@ export type ActiType = {
   rdv_status?: Maybe<Scalars['String']>;
   archive?: Maybe<Scalars['String']>;
   nb_planified?: Maybe<Scalars['Int']>;
-  student_registered?: Maybe<Scalars['Int']>;
   events?: Maybe<Array<EventType>>;
 };
 
@@ -233,6 +235,20 @@ export type Project = {
   registered?: Maybe<Array<Student>>;
 };
 
+export type Modules = {
+  __typename?: 'Modules';
+  semester?: Maybe<Scalars['Int']>;
+  begin: Scalars['String'];
+  end: Scalars['String'];
+  scolaryear: Scalars['String'];
+  code: Scalars['String'];
+  codeinstance: Scalars['String'];
+  status: Scalars['String'];
+  title: Scalars['String'];
+  credits: Scalars['String'];
+  open: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   Login: User;
@@ -244,6 +260,7 @@ export type Query = {
   GetProjectDetails: Project;
   GetPlanning: Array<Maybe<Planning>>;
   GetDayEvent: Array<Maybe<Planning>>;
+  GetModules: Array<Maybe<Modules>>;
 };
 
 
@@ -264,7 +281,6 @@ export type QueryGetModuleDetailArgs = {
   scolaryear: Scalars['String'];
   codemodule: Scalars['String'];
   codeinstance: Scalars['String'];
-  codeActi?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -305,6 +321,11 @@ export type QueryGetDayEventArgs = {
   KeyAuth: Scalars['String'];
   start: Scalars['String'];
   end: Scalars['String'];
+};
+
+
+export type QueryGetModulesArgs = {
+  KeyAuth: Scalars['String'];
 };
 
 export type Mutation = {

@@ -5,6 +5,7 @@ const fr :base = {
     "LOGIN_ERROR_KEY": "Attention la clef autologin est erroné.",
     "GET_KEY": "Get my key !",
     "KEY": "Clef autologin",
+    "GRANTED_ACCESS": "Donne moi l'accés",
     "HEADER_HOME": "Accueil",
     "HEADER_SETTING": "Paramètre",
     "HEADER_MODULE": "Module",
@@ -24,6 +25,10 @@ const fr :base = {
     "PROJ": "Projets",
     "NOTE": "Notes",
     "HISTO": "Historique",
+    "EMPTY_ACTI": "Aucune activités",
+    "EMPTY_PROJ": "Aucun projets",
+    "EMPTY_NOTE": "Aucune notes",
+    "EMPTY_HISTO": "Aucun historique",
     "PROFIL_CREDIT": "Crédits",
     "PROFIL_FIRSTNAME": "Prénom",
     "PROFIL_LASTNAME": "Nom",
@@ -36,6 +41,8 @@ const fr :base = {
     "BACK": "Retour",
     "REGISTER": "S'inscrire",
     "UNREGISTER": "Se désinscrire",
+    "YES": "Oui",
+    "NO": "Non"
 }
 
 export default fr;

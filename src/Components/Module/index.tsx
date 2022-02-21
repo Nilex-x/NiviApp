@@ -2,9 +2,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import ModulePage from "./Module";
+import ModuleDetailPage from "./ModuleDetails";
 
 type HomeParamList = {
     Module: undefined;
+    ModuleDetail: undefined;
 };
 
 const Stack = createNativeStackNavigator<HomeParamList>();
@@ -18,6 +20,20 @@ const ModuleStack: React.FC<BookingStackProps> = () => {
       <Stack.Screen
         name="Module"
         component={ModulePage}
+        options={{
+          title: t("HEADER_MODULE"),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#1C9FF0",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="ModuleDetail"
+        component={ModuleDetailPage}
         options={{
           title: t("HEADER_MODULE"),
           headerStyle: {

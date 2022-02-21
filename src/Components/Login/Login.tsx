@@ -35,7 +35,7 @@ const LoginPage = () => {
                 } else {
                     userInfo.login(key, true);
                 }
-                console.log("result =>", user);
+                // console.log("result =>", user);
             } catch (err) {
                 console.log("graphQL error => ", err)
                 setEmpty(true);

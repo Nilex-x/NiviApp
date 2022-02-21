@@ -2,12 +2,13 @@ import { action, makeObservable, observable } from "mobx";
 import RootStore from "./rootStore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
+import { useTranslation } from "react-i18next";
 
 const getAuth = async () => {
     const isCan = await LocalAuthentication.isEnrolledAsync();
     if (isCan) {
-        const { success } = await LocalAuthentication.authenticateAsync({ promptMessage: "nice move" });
-        console.log("value Auth => ", success);
+        const { success } = await LocalAuthentication.authenticateAsync({ promptMessage: "Give Me Access" });
+        // console.log("value Auth => ", success);
         if (!success) {
             return false;
         }

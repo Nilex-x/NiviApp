@@ -32,7 +32,7 @@ const ProfilPage = () => {
         try {
             const data = await queries.getUserInfo(userInfo.getToken());
             const infos = data?.data?.GetUserInfo;
-            console.log("user Infos => ", infos);
+            // console.log("user Infos => ", infos);
             setInfos(infos);
         } catch (err) {
             console.log("GraphQl error => ", err);

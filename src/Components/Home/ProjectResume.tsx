@@ -29,7 +29,7 @@ const ProjectResumePage = (props) => {
         try {
             const data = await queries.getProjectDetail(userInfo.getToken(), infos.scolaryear, infos.code_module, infos.codeinstance, infos.code_acti);
             const details = data?.data?.GetProjectDetails;
-            console.log("project =>", details.registered);
+            // console.log("project =>", details.registered);
             setDetails(details)
         } catch (err) {
             console.log("GraphQL error", err, JSON.stringify(err, null, 2));

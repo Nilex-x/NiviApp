@@ -9,6 +9,7 @@ import Octicons from '@expo/vector-icons/Octicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Foundation from '@expo/vector-icons/Foundation';
 import format from 'date-fns/format';
+import { t } from 'i18next';
 
 interface DropMenuType {
     list: Array<any>,
@@ -21,8 +22,6 @@ const { userInfo } = RootStore.getInstance();
 const DropDownActi: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
     const [isOpen, setOpen] = useState(false)
-
-    console.log("list =>", list)
 
     return (
         <View style={styles.box}>
@@ -60,7 +59,7 @@ const DropDownActi: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                             :
                             <View style={styles.boxElem} >
                                 <Text>
-                                    Aucun activités
+                                    {t("EMPTY_ACTI")}
                                 </Text>
                             </View>
                         }
@@ -109,7 +108,7 @@ const DropDownProject: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                             :
                             <View style={styles.boxElem} >
                                 <Text>
-                                    Aucun projets
+                                    {t("EMPTY_PROJ")}
                                 </Text>
                             </View>
                         }
@@ -159,7 +158,7 @@ const DropDownNotes: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                             :
                             <View style={styles.boxElem} >
                                 <Text>
-                                    Aucunes notes
+                                    {t("EMPTY_NOTE")}
                                 </Text>
                             </View>
                         }
@@ -214,7 +213,7 @@ const DropDownHisto: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                             :
                             <View style={styles.boxElem} >
                                 <Text>
-                                    Aucunes notes
+                                    {t("EMPTY_HISTO")}
                                 </Text>
                             </View>
                         }
@@ -253,7 +252,7 @@ const HomePage = ({ navigation }: any) => {
 
     useEffect(() => {
         getInfos();
-        console.log(new Date().toISOString())
+        // console.log(new Date().toISOString())
     }, [])
 
     return (
@@ -272,8 +271,8 @@ const HomePage = ({ navigation }: any) => {
                 <View style={{ margin: 10 }}>
                     <DropDownActi list={acti} title={t("ACTI")} onClick={(infos) => navigation.navigate("ActiResume", { infos })} />
                     <DropDownProject list={project} title={t("PROJ")} onClick={(infos) => navigation.navigate("ProjectResume", { infos })} />
-                    <DropDownNotes list={notes} title={t("NOTE")} onClick={() => alert("click")} />
-                    <DropDownHisto list={history} title={t("HISTO")} onClick={() => alert("click")} />
+                    <DropDownNotes list={notes} title={t("NOTE")} onClick={() => {}} />
+                    <DropDownHisto list={history} title={t("HISTO")} onClick={() => {}} />
                 </View>
             </ScrollView>
             <Modal

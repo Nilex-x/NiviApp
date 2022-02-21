@@ -43,14 +43,14 @@ const AgendaPage = () => {
     }
 
     useEffect(() => {
-        console.log("update");
-        getDayEvent();
+        // console.log("update");
+        // getDayEvent();
     }, [])
 
     return (
         <SafeAreaView style={{ width: '100%', height: '100%', flex: 1 }} >
                 <EventCalendar
-                    events={acti}
+                    events={events}
                     width={width}
                     format24h={true}
                     start={8}

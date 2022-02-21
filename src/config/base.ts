@@ -4,6 +4,7 @@ export type base = {
     LOGIN_ERROR_KEY: string;
     GET_KEY: string;
     KEY: string;
+    GRANTED_ACCESS: string;
 
     // headers
     HEADER_HOME: string;
@@ -28,6 +29,10 @@ export type base = {
     PROJ: string;
     NOTE: string;
     HISTO: string;
+    EMPTY_ACTI: string;
+    EMPTY_PROJ: string;
+    EMPTY_NOTE: string;
+    EMPTY_HISTO: string;
 
     // Profil
     PROFIL_FIRSTNAME: string;
@@ -47,4 +52,6 @@ export type base = {
     BACK: string;
     REGISTER: string;
     UNREGISTER: string;
+    YES: string;
+    NO: string;
 }

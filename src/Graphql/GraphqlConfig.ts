@@ -1,12 +1,12 @@
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
+import * as Updates from 'expo-updates';
 
 const getEnvironment = () => {
-    if (process.env.NODE_ENV === "production") {
-        return "http://localhost:4000/"
+    if (Updates.releaseChannel.startsWith('prod')) {
+        return "https://iss.dev.mysite.fun/" // prod env settings
     } else {
-        return "http://localhost:4000"
+        return "http://192.168.1.19:4000/"; // dev env settings
     }
-    return "http://localhost:4000/";
 }
 
 export default class GQLClient {
@@ -17,7 +17,7 @@ export default class GQLClient {
     constructor() {
 
         this.client = new ApolloClient({
-            uri: "http://10.15.193.3:4000/",
+            uri: getEnvironment(),
             cache: new InMemoryCache(),
         });
     }

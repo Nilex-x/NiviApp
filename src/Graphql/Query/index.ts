@@ -1,6 +1,6 @@
 import GQLClient from "../GraphqlConfig";
-import { GET_ACTI_DETAIL, GET_ALL_MODULE, GET_BOARD, GET_DAY_EVENT, GET_MODULE_DETAIL, GET_PLANNING, GET_PROJECT_DETAILS, GET_USER_INFO, LOGIN_USER } from "../schema";
-import { User, Board, Planning, ModuleDetail, ActiType, Module, Project } from "../types";
+import { GET_ACTI_DETAIL, GET_ALL_MODULE, GET_BOARD, GET_DAY_EVENT, GET_MODULES, GET_MODULE_DETAIL, GET_PLANNING, GET_PROJECT_DETAILS, GET_USER_INFO, LOGIN_USER } from "../schema";
+import { User, Board, Planning, ModuleDetail, ActiType, Module, Project, Modules } from "../types";
 
 export default class Query {
     client = GQLClient.getIntance()?.getClient()
@@ -45,7 +45,7 @@ export default class Query {
             })
     }
 
-    getModuleDetails(KeyAuth: string, scolaryear: string, codemodule: string, codeinstance: string, codeActi: string) {
+    getModuleDetails(KeyAuth: string, scolaryear: string, codemodule: string, codeinstance: string) {
         return this.client
             .query<{ GetModuleDetail: ModuleDetail }>({
                 query: GET_MODULE_DETAIL,
@@ -54,7 +54,6 @@ export default class Query {
                     scolaryear,
                     codemodule,
                     codeinstance,
-                    codeActi
                 },
                 fetchPolicy: 'no-cache',
             })
@@ -113,6 +112,17 @@ export default class Query {
                 codeinstance
             },
             fetchPolicy: "no-cache"
+        })
+    }
+
+    getModules(keyAuth: string) {
+        return this.client
+        .query<{ GetModules: [Modules]}>({
+            query: GET_MODULES,
+            variables: {
+                keyAuth
+            },
+            fetchPolicy: 'no-cache'
         })
     }
 }
