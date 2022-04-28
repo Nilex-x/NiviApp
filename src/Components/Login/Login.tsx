@@ -28,12 +28,16 @@ const LoginPage = () => {
                 if (clefAuth.includes("/")) {
                     key = clefAuth.substring(clefAuth.indexOf("auth-"));
                 }
-                const data = await queries.Login(key);
-                const user = data.data.Login;
+                console.log("key", key)
+                const data = await queries.getUserInfo(key);
+                const user = data.data.GetUserInfo;
                 if (user.login == "") {
                     setEmpty(false);
                 } else {
-                    userInfo.login(key, true);
+                    console.log("user loc", user.location)
+                    const loc = user.location.split('/')
+                    console.log(loc)
+                    userInfo.login(key, true, loc[0], loc[1]);
                 }
                 // console.log("result =>", user);
             } catch (err) {
@@ -57,6 +61,7 @@ const LoginPage = () => {
                     <View style={Platform.OS == "ios" ? styles.iosBox : styles.androidBox}>
                         <Text>{t("LOGIN_TITLE")}</Text>
                         <TextInput
+                            nativeID='inputLogin'
                             accessibilityLabel={t("KEY")}
                             style={styles.text}
                             placeholder={t("KEY")}

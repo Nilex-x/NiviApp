@@ -19,8 +19,10 @@ export const Navigation = () => {
     const userlogin = async () => {
         try {
             const token: string | null = await AsyncStorage.getItem("LoginToken")
+            const country: string | null = await AsyncStorage.getItem("country")
+            const city: string | null = await AsyncStorage.getItem("city")
             if (token) {
-                userInfo.login(token, false);
+                userInfo.login(token, false, country, city);
             }
         } catch (err) {
             console.log(err);

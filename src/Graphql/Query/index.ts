@@ -1,6 +1,6 @@
 import GQLClient from "../GraphqlConfig";
-import { GET_ACTI_DETAIL, GET_ALL_MODULE, GET_BOARD, GET_DAY_EVENT, GET_MODULES, GET_MODULE_DETAIL, GET_PLANNING, GET_PROJECT_DETAILS, GET_USER_INFO, LOGIN_USER } from "../schema";
-import { User, Board, Planning, ModuleDetail, ActiType, Module, Project, Modules } from "../types";
+import { GET_ACTI_DETAIL, GET_ALL_MODULE, GET_BOARD, GET_DAY_EVENT, GET_MARKS_DATE, GET_MODULES, GET_MODULE_DETAIL, GET_PLANNING, GET_PROJECT_DETAILS, GET_USER_INFO, LOGIN_USER } from "../schema";
+import { User, Board, Planning, ModuleDetail, ActiType, Module, Project, Modules, UserAll, MarksReturn } from "../types";
 
 export default class Query {
     client = GQLClient.getIntance()?.getClient()
@@ -17,7 +17,7 @@ export default class Query {
 
     getUserInfo(KeyAuth: string) {
         return this.client
-            .query<{ GetUserInfo: User }>({
+            .query<{ GetUserInfo: UserAll }>({
                 query: GET_USER_INFO,
                 variables: {
                     KeyAuth
@@ -87,14 +87,15 @@ export default class Query {
         })
     }
 
-    getDayEvent(KeyAuth: string, start: string, end: string) {
+    getDayEvent(KeyAuth: string, start: string, country: string, city: string) {
         return this.client
         .query<{ GetDayEvent: [Planning] }>({
             query: GET_DAY_EVENT,
             variables: {
                 KeyAuth,
                 start,
-                end
+                country,
+                city
             },
             fetchPolicy: 'no-cache',
         })
@@ -123,6 +124,17 @@ export default class Query {
                 keyAuth
             },
             fetchPolicy: 'no-cache'
+        })
+    }
+
+    getMarksDate(keyAuth: string) {
+        return this.client
+        .query<{GetMarks: MarksReturn }>({
+            query: GET_MARKS_DATE,
+            variables: {
+                keyAuth
+            },
+            fetchPolicy: "cache-first"
         })
     }
 }

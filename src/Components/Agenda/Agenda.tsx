@@ -1,73 +1,128 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Modal, Linking, ActivityIndicator, Dimensions } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Modal, ActivityIndicator } from 'react-native';
+import { DateTime } from 'luxon';
+import { Planning } from '../../Graphql/types';
+import { Entypo } from '@expo/vector-icons';
 import Query from '../../Graphql/Query';
 import RootStore from '../../store/rootStore';
-import EventCalendar from 'react-native-events-calendar';
-import addDays from 'date-fns/addDays';
 
 const { userInfo } = RootStore.getInstance();
-
-let { width } = Dimensions.get('window')
-
-const events = [
-    { start: '2022-02-17 14:30:00', end: '2022-02-17 15:30:00', title: 'Dr. Mariana Joseph', summary: '3412 Piedmont Rd NE, GA 3032' },
-]
 
 const AgendaPage = () => {
     const queries = new Query();
     const { t, i18n } = useTranslation();
-    const [dateSelected, setDateSelected] = useState<string>(new Date().toISOString().split('T')[0])
+    const [dateSelected, setDateSelected] = useState<string>(DateTime.now().toISODate().toString())
     const [isLoading, setLoading] = useState<boolean>(true);
-    const [acti, setActi] = useState([])
+    const [Events, setEvents] = useState<Array<any>>([]);
 
-    const getDayEvent = async () => {
+    const getColor = (title: string) => {
+        if (title == "other")
+            return "#008ADF"
+        if (title == "exam")
+            return "#dd9473"
+        if (title == "rdv")
+            return "#e2aa55"
+        if (title == "tp")
+            return "#a48cbb"
+        if (title == "class")
+            return "#28ABFB"
+    }
+
+    const getEvent = (planning: Array<Planning>, date: String) => { // [titlemodule] >> [acti_title] [salle] ([total_students_registered]/[nb_seat])
+        const data = planning.filter(element => DateTime.fromSQL(element.end).diff(DateTime.fromISO(date)).as("hours") > 0 && DateTime.fromSQL(element.start).diff(DateTime.fromISO(date)).as("hours") < 1 && (element.module_available && element.module_registered));
+        const new_data = data.map(element => ({
+            title: element.titlemodule + " >> " + element.acti_title + " " + element.salle + " (" + element.total_students_registered + "/" + element.nb_seat + ")",
+            start_hour: DateTime.fromSQL(element.start).hour,
+            start_minute: DateTime.fromSQL(element.start).minute,
+            end_hour: DateTime.fromSQL(element.end).hour,
+            end_minute: DateTime.fromSQL(element.end).minute,
+            codeModule: element.codemodule,
+            scolaryear: element.scolaryear,
+            codeinstance: element.codeinstance,
+            codeActi: element.codeacti,
+            color: getColor(element.type_code)
+        }));
+        return new_data;
+    }
+
+    const getPlanning = async () => {
+        setLoading(true)
         try {
-            const data = await queries.getPlanning(userInfo.getToken());
-            const event = data?.data?.GetPlanning;
-            // console.log("event => ", event);
-            const newEvent = event.map(element => {
-                return ({
-                    start: element.start,
-                    end: element.end,
-                    title: element?.titlemodule + " >> " + element?.acti_title,
-                    summary: element.salle
+            const event = []
+            const data = await queries.getDayEvent(userInfo.getToken(), DateTime.fromISO(dateSelected).toFormat("yyyy-LL-dd"), userInfo.country, userInfo.city)
+            const planning = data.data.GetDayEvent;
+            for (let i = 8; i <= 23; i++) {
+                const date = DateTime.fromISO(dateSelected).set({ hour: i }).toISO()
+                event.push({
+                    hour: DateTime.fromISO(dateSelected).set({ hour: i }).toISO(),
+                    event: getEvent(planning, date)
                 })
-            })
-            setActi(newEvent);
+            }
+            setEvents(event)
         } catch (err) {
-            console.log("graphQL error => ", err, JSON.stringify(err, null, 2));
+            console.log("graphQL error", JSON.stringify(err, null, 2))
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     }
 
+    const DisplayEvents = ({ event }) => {
+        const pourcentWidth = 100 / event.length;
+
+        return (
+            <View style={{ width: "85%", display: "flex", flexDirection: "row", justifyContent: "flex-start" }}>
+                {event.map(element => {
+                    const pourcentHeigth = element.end_minute == 0 ? 100 : 100 / (60 / element.end_minute);
+                    return (
+                        <View style={{ margin: 1, backgroundColor: element.color, width: `${pourcentWidth}%`, height: `${pourcentHeigth}%`, flexShrink: 10, alignItems: "center", borderRadius: 10 }}>
+                            <Text style={{ color: "white", width: "85%" }}>{element.title}</Text>
+                        </View>
+                    )
+                })}
+            </View>
+        )
+    }
+
     useEffect(() => {
-        // console.log("update");
-        // getDayEvent();
-    }, [])
+        getPlanning()
+    }, [dateSelected])
 
     return (
-        <SafeAreaView style={{ width: '100%', height: '100%', flex: 1 }} >
-                <EventCalendar
-                    events={events}
-                    width={width}
-                    format24h={true}
-                    start={8}
-                    end={22}
-                    initDate={dateSelected}
-                    onDateChanged
-                    dateChanged={(date: string) => console.warn(date)}
-                    scrollToFirst={true}
-                    style={ {
-                        container: {
-                            backgroundColor: 'white'
-                        }, 
-                        event: {
-                            opacity: 0.01
-                        }
-                    }}
-                />
+        <SafeAreaView style={{ width: '100%', height: '100%', flex: 1, backgroundColor: "#084681" }}>
+            <View style={{ padding: 8, marginBottom: 3, borderBottomRightRadius: 100, borderBottomLeftRadius: 100, display: "flex", flexDirection: "row", justifyContent: "space-around", backgroundColor: "white" }}>
+                <Entypo name="arrow-with-circle-left" size={30} color="#FF6100" onPress={() => setDateSelected(DateTime.fromISO(dateSelected).minus({ days: 1 }).toISO())} />
+                <View style={{ alignItems: "center", justifyContent: "center" }}>
+                    <Text>{DateTime.fromISO(dateSelected).setLocale('fr').toFormat("dd LLLL yyyy")}</Text>
+                </View>
+                <Entypo name="arrow-with-circle-right" size={30} color="#FF6100" onPress={() => setDateSelected(DateTime.fromISO(dateSelected).plus({ days: 1 }).toISO())} />
+            </View>
+            <ScrollView>
+                <View style={{ display: "flex", width: "100%" }}>
+                    {Events.map((element, index) => (
+                        <View key={element.title + element.hour + index} style={{ flexDirection: "row", height: 200, borderColor: "white", borderTopWidth: 1, borderBottomWidth: (index + 1 == Events.length) ? 1 : 0 }}>
+                            <View style={{ width: "15%", alignItems: "center", borderRightWidth: 1, borderColor: "white" }}>
+                                <Text style={{ fontSize: 20, color: "white" }}>{DateTime.fromISO(element.hour).hour} h</Text>
+                            </View>
+                            <DisplayEvents event={element.event} />
+                        </View>
+                    ))}
+                </View>
+                <Modal
+                    visible={isLoading}
+                    transparent={true}
+                >
+                    <View style={styles.centeredView}>
+                        <View>
+                            <View style={[styles.modalView, { width: '10%' }]}>
+                                <ActivityIndicator
+                                    color="#1C9FF0"
+                                />
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+            </ScrollView>
         </SafeAreaView>
     )
 }

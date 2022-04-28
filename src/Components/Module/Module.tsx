@@ -5,7 +5,7 @@ import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, Tou
 import Query from '../../Graphql/Query';
 import RootStore from '../../store/rootStore';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { t } from 'i18next';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 
 interface DropMenuType {
     list: Array<any>,
@@ -13,16 +13,32 @@ interface DropMenuType {
     onClick: (infos: any) => void
 }
 
+interface StatusIconType {
+    status: String
+}
+
 const { userInfo } = RootStore.getInstance();
+
+const StatusIcon = ({ status }: StatusIconType) => {
+    if (status == "notregistered") {
+        return <SimpleLineIcons name="user-follow" size={24} color="black" />
+    } else if (status == "ongoing") {
+        return <SimpleLineIcons name="user-following" size={24} color="#1C9FF0"/>
+    } else if (status == "fail") {
+        return <AntDesign name="close" size={24} color="red" />
+    } else if (status == "valid") {
+        return <AntDesign name="check" size={24} color="green" />
+    } else {
+        return <SimpleLineIcons name="user-unfollow" size={24} color="black" />
+    }
+}
 
 const DropDownModule: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
     const [isOpen, setOpen] = useState(false)
 
-    // console.log("list =>", list)
-
     return (
-        <View style={[styles.box, { marginBottom: 10 }]}>
+        <View style={styles.box}>
             <TouchableOpacity
                 onPress={() => setOpen(!isOpen)}
             >
@@ -47,9 +63,8 @@ const DropDownModule: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                         {list.length > 0 ?
                             list.map((element, index) =>
                                 <TouchableOpacity key={element.title + element.credits + element.begin + index} style={styles.boxElem} onPress={() => onClick(element)} >
-                                    <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>Title: </Text>{element.title}</Text>
-                                    <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("PROFIL_CREDIT")}: </Text>{element.credits}</Text>
-                                    <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_REGISTED")}: </Text>{element.status == "notregistered" ? t("NO") : t("YES")}</Text>
+                                    <Text>{element.title}</Text>
+                                    <StatusIcon status={element.status}/>
                                 </TouchableOpacity>
                             )
                             :
@@ -66,11 +81,11 @@ const DropDownModule: React.FC<DropMenuType> = ({ list, title, onClick }) => {
     )
 }
 
-const ModulePage = ({ navigation }) => {
+const ModulePage = ({ navigation }: any) => {
     const queries = new Query();
     const { t, i18n } = useTranslation();
     const [isLoading, setLoading] = useState(false);
-    const [modules, setModules] = useState([]);
+    const [modules, setModules] = useState<any>([]);
     const [isRefreshingBooking, setRefreshBooking] = useState<boolean>(false);
 
     const getModules = async () => {
@@ -106,12 +121,12 @@ const ModulePage = ({ navigation }) => {
                     />
                 }
             >
-                <View style={{ margin: 10 }}>
+                <View style={{ width: "100%" }}>
                     {modules.length > 0 &&
-                        <View>
-                            <DropDownModule list={modules[0]} title={"semestre " + modules[0][0].semester} onClick={(infos) => {}} />
-                            <DropDownModule list={modules[1]} title={"semestre " + modules[1][0].semester} onClick={(infos) => {}} />
-                            <DropDownModule list={modules[2]} title={"semestre " + modules[2][0].semester} onClick={(infos) => {}} />
+                        <View style={{ width: "100%" }}>
+                            <DropDownModule list={modules[0]} title={"semestre " + modules[0][0].semester} onClick={(infos) => { navigation.navigate("ModuleDetail", { infos })}} />
+                            <DropDownModule list={modules[1]} title={"semestre " + modules[1][0].semester} onClick={(infos) => { navigation.navigate("ModuleDetail", { infos })}} />
+                            <DropDownModule list={modules[2]} title={"semestre " + modules[2][0].semester} onClick={(infos) => { navigation.navigate("ModuleDetail", { infos })}} />
                         </View>
                     }
                 </View>
@@ -143,7 +158,7 @@ const styles = StyleSheet.create({
     box: {
         padding: 20,
         alignSelf: "center",
-        width: "95%",
+        width: "98%",
         marginTop: 20,
         backgroundColor: "white",
         alignItems: "center",
@@ -172,15 +187,6 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: "red"
     },
-    wrapper: {
-        backgroundColor: "blue",
-        height: 40,
-        borderRadius: 15,
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        marginTop: 10,
-    },
     textButton: {
         color: "white",
         fontWeight: "bold",
@@ -191,7 +197,6 @@ const styles = StyleSheet.create({
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 22
     },
     modalView: {
         backgroundColor: "white",
@@ -216,8 +221,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         alignItems: "flex-start",
-        marginLeft: 30,
-        marginRight: 30,
+        marginLeft: 10,
+        marginRight: 10,
         marginTop: 10
     },
     spaceBet: {
@@ -225,21 +230,24 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         borderColor: "black",
-        marginLeft: 30,
-        marginRight: 30,
-        width: "95%"
+        marginLeft: 20,
+        marginRight: 20,
+        width: "98%"
     },
     boxElem: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
         padding: 20,
         alignSelf: "center",
         width: "100%",
-        marginTop: 20,
+        marginTop: 10,
         backgroundColor: "white",
         alignItems: "flex-start",
         borderRadius: 10,
         borderWidth: 0.8,
         borderColor: "#1C9FF0"
-    }
+    },
 });
 
 export default ModulePage;

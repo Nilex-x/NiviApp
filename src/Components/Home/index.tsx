@@ -3,12 +3,14 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import ActiResumePage from "./ActiResume";
 import Home from "./Home";
+import MarksResumePage from "./MarksResume";
 import ProjectResumePage from "./ProjectResume";
 
 type HomeParamList = {
     Home: undefined;
     ActiResume: undefined;
     ProjectResume: undefined;
+    MarkResume: undefined;
 };
 
 const Stack = createNativeStackNavigator<HomeParamList>();
@@ -50,6 +52,20 @@ const HomeStack: React.FC<BookingStackProps> = () => {
       <Stack.Screen
         name="ProjectResume"
         component={ProjectResumePage}
+        options={{
+          title: t("HEADER_HOME_PROJ"),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#1C9FF0",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="MarkResume"
+        component={MarksResumePage}
         options={{
           title: t("HEADER_HOME_PROJ"),
           headerStyle: {

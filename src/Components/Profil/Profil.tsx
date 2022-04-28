@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Modal, Linking, ActivityIndicator, RefreshControl } from 'react-native';
 import Query from '../../Graphql/Query';
 import RootStore from '../../store/rootStore';
+import RNPickerSelect from 'react-native-picker-select';
 
 const { userInfo } = RootStore.getInstance();
 
@@ -25,15 +26,27 @@ const ProfilPage = () => {
     const { t, i18n } = useTranslation();
     const [infos, setInfos] = useState<infosUser | any>();
     const [isRefreshingBooking, setRefreshBooking] = useState<boolean>(false);
+    const [marksDate, setMarksDate] = useState<any>([])
+    const [marksModules, setMarksModules] = useState<any>([])
+    const [selectedDate, setSelectedDate] = useState();
+    const [selectedModule, setSelectedModule] = useState();
     const [isLoading, setLoading] = useState(true);
 
     const getInfo = async () => {
         setLoading(true);
         try {
+            const temp: Array<any> = []
             const data = await queries.getUserInfo(userInfo.getToken());
+            const dataMarks = await queries.getMarksDate(userInfo.getToken());
             const infos = data?.data?.GetUserInfo;
-            // console.log("user Infos => ", infos);
+            const marksDate = dataMarks?.data?.GetMarks
             setInfos(infos);
+            setMarksModules(marksDate.module?.map(element => {
+                if (!temp.find(tempElement => tempElement.label == element.scolaryear))
+                    temp.push({label: element.scolaryear, value: element.scolaryear})
+                return ({label: element.title, value: element.title})
+            }))
+            setMarksDate(temp);
         } catch (err) {
             console.log("GraphQl error => ", err);
         } finally {
@@ -67,17 +80,37 @@ const ProfilPage = () => {
                         </View>
                     </View>
                 </View>
-                <View style={[styles.sameLine, { alignItems: "flex-start", justifyContent: "space-around", marginTop : 20 }]}>
-                    <View style={[styles.box, { width: "45%", height: 150, padding: 12, marginTop: 0}]}>
+                <View style={[styles.sameLine, { alignItems: "flex-start", justifyContent: "space-around", marginTop: 20 }]}>
+                    <View style={[styles.box, { width: "48%", height: 150, padding: 12, marginTop: 0 }]}>
                         <View style={[styles.betColumn, { height: "100%" }]}>
                             <Text>{t("PROFIL_CREDIT")}: {infos?.credits}</Text>
                             <Text>G.P.A: {infos?.gpa}</Text>
                         </View>
                     </View>
-                    <View style={[styles.box, { width: "45%", height: 150, padding: 12, marginTop: 0 }]}>
+                    <View style={[styles.box, { width: "48%", height: 150, padding: 12, marginTop: 0 }]}>
                         <View style={[styles.betColumn, { height: "100%" }]}>
                             <Text>{t("PROFIL_SEMETER")}: {infos?.semester}</Text>
                             <Text>{t("PROFIL_PROMO")}: {infos?.promo}</Text>
+                        </View>
+                    </View>
+                </View>
+                <View style={styles.box}>
+                    <View style={[styles.sameLine]}>
+                        <View style={{ width: "48%", alignItems: "center" }}>
+                            <RNPickerSelect
+                                placeholder={{ inputLabel: "Date", label: "Date" }}
+                                onValueChange={(value) => console.log(value)}
+                                items={marksDate}
+                                value={selectedDate}
+                            />
+                        </View>
+                        <View>
+                            <RNPickerSelect
+                                placeholder={{ inputLabel: "Date", label: "Date" }}
+                                onValueChange={(value) => console.log(value)}
+                                items={marksModules}
+                                value={selectedModule}
+                            />
                         </View>
                     </View>
                 </View>
@@ -120,9 +153,9 @@ const styles = StyleSheet.create({
     },
     box: {
         padding: 20,
+        margin: 15,
         alignSelf: "center",
-        width: "95%",
-        marginTop: 20,
+        width: "98%",
         backgroundColor: "white",
         borderRadius: 10,
         shadowOpacity: 0.3,

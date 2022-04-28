@@ -1,11 +1,9 @@
-import { keys } from 'mobx';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Modal, Linking, ActivityIndicator, RefreshControl } from 'react-native';
 import Query from '../../Graphql/Query';
 import RootStore from '../../store/rootStore';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Button from '../Utils/Button';
+import { DateTime } from 'luxon';
 
 interface DropMenuType {
     list: Array<any>,
@@ -18,22 +16,27 @@ const { userInfo } = RootStore.getInstance();
 const ModuleDetailPage = (props) => {
     const queries = new Query();
     const { t, i18n } = useTranslation();
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(true);
     const [isRefreshingBooking, setRefreshBooking] = useState<boolean>(false);
     const infos = props.route.params.infos;
     const [detail, setDetails] = useState({
-        events: [],
+        inCommingActivites: [],
+        passActivites: [],
         description: "",
     });
 
     const getModules = async () => {
         setLoading(true);
+        const date = new Date()
         try {
-            // console.log("infos =>", infos);
             const data = await queries.getModuleDetails(userInfo.getToken(), infos.scolaryear, infos.code, infos.codeinstance);
             const details = data?.data?.GetModuleDetail;
-            // console.log("details =>", details);
-            setDetails(details);
+            setDetails({
+                title: details.title,
+                description: details.description,
+                inCommingActivites: details.activites?.filter(element => DateTime.fromSQL(element.end).diffNow() > 0),
+                passActivites: details.activites?.filter(element => DateTime.fromSQL(element.end).diffNow() <= 0),
+            });
         } catch (err) {
             console.log("GraphQL error", err, JSON.stringify(err, null, 2));
         } finally {
@@ -43,6 +46,7 @@ const ModuleDetailPage = (props) => {
 
     useEffect(() => {
         getModules();
+        console.log("nb ingooing", detail.inCommingActivites.length, "past", detail.passActivites.length)
     }, []);
 
     return (
@@ -60,40 +64,67 @@ const ModuleDetailPage = (props) => {
                 <View style={{ margin: 10 }}>
                     <View style={styles.box}>
                         <Text style={styles.titleInfo}>{detail?.title}</Text>
-                        {detail?.description.length > 0 &&
-                            <View style={{ margin: 10 }}>
-                                <Text>{detail?.description}</Text>
-                            </View>
+                        {!isLoading &&
+                            (detail?.description.length > 0 ?
+                                <ScrollView style={{ margin: 10, maxHeight: 200 }} showsVerticalScrollIndicator={true}>
+                                    <Text>{detail?.description}</Text>
+                                </ScrollView>
+                                :
+                                <View style={{ margin: 10 }}>
+                                    <Text>Pas de description</Text>
+                                </View>)
                         }
                     </View>
 
                     <View style={styles.box}>
                         <Text style={styles.titleInfo}>Session</Text>
-                        <View style={styles.containerDrop}>
-                            <ScrollView style={{ maxHeight: 420 }} nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
-                                {detail?.events.length > 0 ?
-                                    detail?.events.map(element =>
-                                        <View key={element.begin + element.end} style={styles.boxElem} >
-                                            <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{(t("ACTI_AT"))}: </Text>{format(new Date(element.begin), "dd/MM/yyyy - HH:mm")}</Text>
-                                            <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_UNTIL")}: </Text>{format(new Date(element.end), "dd/MM/yyyy - HH:mm")}</Text>
-                                            <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_ROOM")}: </Text>{element.location ? element.location : "Non définie"}</Text>
-                                            <Text><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_REGISTED")}: </Text>{element.nb_inscrits}</Text>
-                                            {element?.registed ?
-                                                <Button title={t("UNREGISTER")} onClick={() => alert("unregister")} styleButton={{ width: '100%' }} />
-                                                :
-                                                <Button title={t("REGISTER")} onClick={() => alert('register')} styleButton={{ width: '100%' }} />
-                                            }
+                        {!isLoading &&
+                            (<View style={styles.containerDrop}>
+                                <ScrollView style={{ maxHeight: 420 }} nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
+                                    {detail?.inCommingActivites.length > 0 ?
+                                        detail?.inCommingActivites.map(element =>
+                                            <View key={element.title + element.codeacti} style={styles.boxElem}>
+                                                <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_TITLE")}: </Text>{element.title}</Text>
+                                                <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_TITLE")}: </Text>{element.type_code}</Text>
+                                                {/* <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{(t("ACTI_AT"))}: </Text>{format(new Date(element.begin), "dd/MM/yyyy - HH:mm")}</Text>
+                                                <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_UNTIL")}: </Text>{format(new Date(element.end), "dd/MM/yyyy - HH:mm")}</Text> */}
+                                            </View>
+                                        )
+                                        :
+                                        <View style={styles.boxElem} >
+                                            <Text>
+                                                Aucun Session
+                                            </Text>
                                         </View>
-                                    )
-                                    :
-                                    <View style={styles.boxElem} >
-                                        <Text>
-                                            Aucun Session
-                                        </Text>
-                                    </View>
-                                }
-                            </ScrollView>
-                        </View>
+                                    }
+                                </ScrollView>
+                            </View>)
+                        }
+                    </View>
+                    <View style={styles.box}>
+                        <Text style={styles.titleInfo}>Session passès</Text>
+                        {!isLoading &&
+                            (<View style={styles.containerDrop}>
+                                <ScrollView style={{ maxHeight: 420 }} nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
+                                    {detail?.passActivites.length > 0 ?
+                                        detail?.passActivites.map(element =>
+                                            <View key={element.title + element.codeacti} style={styles.boxElem} >
+                                                <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_TITLE")}: </Text>{element.title}</Text>
+                                                <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_TITLE")}: </Text>{element.type_code}</Text>
+                                                {/* <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{(t("ACTI_AT"))}: </Text>{format(new Date(element.begin), "dd/MM/yyyy - HH:mm")}</Text>
+                                                <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>{t("ACTI_UNTIL")}: </Text>{format(new Date(element.end), "dd/MM/yyyy - HH:mm")}</Text> */}
+                                            </View>
+                                        )
+                                        :
+                                        <View style={styles.boxElem} >
+                                            <Text>
+                                                Aucun Session
+                                            </Text>
+                                        </View>
+                                    }
+                                </ScrollView>
+                            </View>)
+                        }
                     </View>
                 </View>
                 <Modal

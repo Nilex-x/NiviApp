@@ -31,6 +31,7 @@ export const GET_USER_INFO = gql`
     studentyear
     promo
     scolaryear
+    location
   }
 }`
 
@@ -43,7 +44,6 @@ export const GET_MODULE_DETAIL = gql`
     opened
     credits
     description
-    competence
     resp {
       title
       picture
@@ -62,6 +62,7 @@ export const GET_MODULE_DETAIL = gql`
       project_title
       deadline
       type_title
+      type_code
     }
     studentRegistered {
       login
@@ -207,8 +208,8 @@ query LoginUser($KeyAuth: String!) {
 }`
 
 export const GET_DAY_EVENT = gql`
-query GetDayEvent($KeyAuth: String!, $end: String!, $start: String!) {
-  GetDayEvent(KeyAuth: $KeyAuth, end: $end, start: $start) {
+query GetDayEvent($KeyAuth: String!, $start: String!, $country: String!, $city: String!) {
+  GetDayEvent(KeyAuth: $KeyAuth, start: $start, country: $country, city: $city) {
     scolaryear
     codemodule
     codeevent
@@ -290,3 +291,13 @@ query GetModules($keyAuth: String!) {
   }
 }
 `
+
+export const GET_MARKS_DATE = gql`
+query GetMarks($keyAuth: String!, $scolaryear: String, $codeModule: String) {
+  GetMarks(KeyAuth: $keyAuth, scolaryear: $scolaryear, codeModule: $codeModule) {
+    module {
+      scolaryear
+      title
+    }
+  }
+}`

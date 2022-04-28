@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Modal, Linking, ActivityIndicator } from 'react-native';
 import Query from '../../Graphql/Query';
 import RootStore from '../../store/rootStore';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import Button from '../Utils/Button';
 import SwitchSelector from 'react-native-switch-selector';
+import { Checkbox } from 'react-native-paper';
 
 const { userInfo } = RootStore.getInstance();
 
@@ -14,6 +14,7 @@ const SettingPage = () => {
     const queries = new Query();
     const { t, i18n } = useTranslation();
     const [langSelected, setLang] = useState<string | any>(i18n.language);
+    const [isChecked, setCheck] = useState<boolean>(userInfo.goToTop);
 
     const logout = async () => {
         await userInfo.logout();
@@ -28,6 +29,11 @@ const SettingPage = () => {
         { label: t("EN"), value: "en" }
     ];
 
+    const setChecked = (value: boolean) => {
+        setCheck(value);
+        userInfo.setGoToTop(value);
+    }
+
     return (
         <SafeAreaView style={{ backgroundColor: "#1C9FF0", width: '100%', height: '100%', flex: 1 }} >
             <ScrollView>
@@ -38,6 +44,17 @@ const SettingPage = () => {
                         buttonColor="#1C9FF0"
                         onPress={(value: string) => changeLang(value)}
                     />
+                </View>
+                <View style={styles.box}>
+                    <Text style={{ fontSize: 18, marginBottom: 10, textDecorationLine: "underline" }}>Accessibilité</Text>
+                    <View style={styles.spaceBet}>
+                        <Checkbox.Android
+                            status={isChecked ? 'checked' : 'unchecked'}
+                            onPress={() => setChecked(!isChecked)}
+                            color="#1C9FF0"
+                        />
+                        <Text>Got To Top Home Page</Text>
+                    </View>
                 </View>
                 <View style={styles.box}>
                     <Button title={t("DECONNECT")} onClick={logout} styleButton={{ width: '100%' }} />
@@ -56,8 +73,8 @@ const styles = StyleSheet.create({
     box: {
         padding: 20,
         alignSelf: "center",
-        width: "95%",
-        marginTop: 40,
+        width: "98%",
+        marginTop: 20,
         backgroundColor: "white",
         alignItems: "center",
         borderRadius: 10,
@@ -134,13 +151,11 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     spaceBet: {
+        width: "100%",
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between",
-        borderColor: "black",
-        borderBottomWidth: 0.5,
-        marginLeft: 30,
-        marginRight: 30,
+        alignItems: "center",
+        justifyContent: "flex-start",
     },
     boxElem: {
         padding: 20,

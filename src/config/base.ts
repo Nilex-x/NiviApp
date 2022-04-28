@@ -14,6 +14,7 @@ export type base = {
     HEADER_PROFIL: string;
     HEADER_HOME_ACTI: string;
     HEADER_HOME_PROJ: string;
+    HEADER_HOME_MARK: string;
 
     // Acti
     ACTI_AT: string;
@@ -23,6 +24,7 @@ export type base = {
     ACTI_REGISTER: string;
     ACTI_ALREADY_R: string;
     ACTI_ALREADY_U: string;
+    ACTI_TITLE: string;
 
     // Home
     ACTI: string;

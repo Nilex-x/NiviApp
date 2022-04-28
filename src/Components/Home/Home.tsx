@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Modal, ActivityIndicator } from 'react-native';
 import Query from '../../Graphql/Query';
@@ -10,6 +10,8 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Foundation from '@expo/vector-icons/Foundation';
 import format from 'date-fns/format';
 import { t } from 'i18next';
+import { useScrollToTop } from '@react-navigation/native';
+import { observer } from 'mobx-react-lite';
 
 interface DropMenuType {
     list: Array<any>,
@@ -21,7 +23,7 @@ const { userInfo } = RootStore.getInstance();
 
 const DropDownActi: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
-    const [isOpen, setOpen] = useState(false)
+    const [isOpen, setOpen] = useState(true)
 
     return (
         <View style={styles.box}>
@@ -41,12 +43,12 @@ const DropDownActi: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                 </View>
             </TouchableOpacity>
             {isOpen &&
-                <View style={styles.containerDrop}>
-                    <ScrollView
-                        style={{ maxHeight: 400 }}
-                        nestedScrollEnabled={true}
-                        showsVerticalScrollIndicator={false}
-                    >
+                <ScrollView
+                    style={{ maxHeight: 400 }}
+                    nestedScrollEnabled={true}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={styles.containerDrop}>
                         {list.length > 0 ?
                             list.map(element =>
                                 <TouchableOpacity key={element.title + element.salle + element.code_acti + element.timeline_end} style={styles.boxElem} onPress={() => onClick(element)} >
@@ -63,8 +65,8 @@ const DropDownActi: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                                 </Text>
                             </View>
                         }
-                    </ScrollView>
-                </View>
+                    </View>
+                </ScrollView>
             }
         </View>
     )
@@ -72,7 +74,7 @@ const DropDownActi: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
 const DropDownProject: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
-    const [isOpen, setOpen] = useState(false);
+    const [isOpen, setOpen] = useState(true);
 
     return (
         <View style={styles.box}>
@@ -92,12 +94,12 @@ const DropDownProject: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                 </View>
             </TouchableOpacity>
             {isOpen &&
-                <View style={styles.containerDrop}>
-                    <ScrollView
-                        style={{ maxHeight: 400 }}
-                        nestedScrollEnabled={true}
-                        showsVerticalScrollIndicator={false}
-                    >
+                <ScrollView
+                    style={{ maxHeight: 400 }}
+                    nestedScrollEnabled={true}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={styles.containerDrop}>
                         {list.length > 0 ?
                             list.map(element =>
                                 <TouchableOpacity key={element.title + element.text} style={styles.boxElem} onPress={() => onClick(element)} >
@@ -112,8 +114,8 @@ const DropDownProject: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                                 </Text>
                             </View>
                         }
-                    </ScrollView>
-                </View>
+                    </View>
+                </ScrollView>
             }
         </View>
     )
@@ -121,7 +123,7 @@ const DropDownProject: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
 const DropDownNotes: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
-    const [isOpen, setOpen] = useState(false);
+    const [isOpen, setOpen] = useState(true);
 
     return (
         <View style={styles.box}>
@@ -141,12 +143,12 @@ const DropDownNotes: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                 </View>
             </TouchableOpacity>
             {isOpen &&
-                <View style={styles.containerDrop}>
-                    <ScrollView
-                        style={{ maxHeight: 400 }}
-                        nestedScrollEnabled={true}
-                        showsVerticalScrollIndicator={false}
-                    >
+                <ScrollView
+                    style={{ maxHeight: 400 }}
+                    nestedScrollEnabled={true}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={styles.containerDrop}>
                         {list.length > 0 ?
                             list.map(element =>
                                 <TouchableOpacity key={element.title + element.text} style={styles.boxElem} onPress={onClick} >
@@ -162,8 +164,8 @@ const DropDownNotes: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                                 </Text>
                             </View>
                         }
-                    </ScrollView>
-                </View>
+                    </View>
+                </ScrollView>
             }
         </View>
     )
@@ -171,7 +173,7 @@ const DropDownNotes: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
 const DropDownHisto: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
-    const [isOpen, setOpen] = useState(false);
+    const [isOpen, setOpen] = useState(true);
 
     return (
         <View style={styles.box}>
@@ -191,12 +193,12 @@ const DropDownHisto: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                 </View>
             </TouchableOpacity>
             {isOpen &&
-                <View style={styles.containerDrop}>
-                    <ScrollView
-                        style={{ maxHeight: 420 }}
-                        nestedScrollEnabled={true}
-                        showsVerticalScrollIndicator={false}
-                    >
+                <ScrollView
+                    style={{ maxHeight: 400 }}
+                    nestedScrollEnabled={true}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={styles.containerDrop}>
                         {list.length > 0 ?
                             list.map(element => {
                                 let title: String = element.title
@@ -217,14 +219,16 @@ const DropDownHisto: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                                 </Text>
                             </View>
                         }
-                    </ScrollView>
-                </View>
+                    </View>
+                </ScrollView>
             }
         </View>
     )
 }
 
 const HomePage = ({ navigation }: any) => {
+    const scrollRef: any = useRef();
+    useScrollToTop(scrollRef);
     const queries = new Query();
     const { t } = useTranslation();
     const [isLoading, setLoading] = useState(false);
@@ -233,6 +237,7 @@ const HomePage = ({ navigation }: any) => {
     const [notes, setNotes] = useState([]);
     const [history, setHistory] = useState([]);
     const [isRefreshingBooking, setRefreshBooking] = useState<boolean>(false);
+    const [isGoToTop, setGoTo] = useState<boolean>(false);
 
     const getInfos = async () => {
         setLoading(true);
@@ -250,14 +255,25 @@ const HomePage = ({ navigation }: any) => {
         }
     }
 
+    const scrollHandler = (event: any) => {
+        setGoTo(event.nativeEvent.contentOffset.y > 50)
+    }
+
+    const goToTop = () => {
+        scrollRef.current?.scrollTo({
+            y: 0,
+            animated: true,
+        });
+    }
+
     useEffect(() => {
         getInfos();
-        // console.log(new Date().toISOString())
     }, [])
 
     return (
         <SafeAreaView style={{ backgroundColor: "#1C9FF0", width: '100%', height: '100%', flex: 1 }} >
             <ScrollView
+                scrollEnabled={true}
                 refreshControl={
                     <RefreshControl
                         refreshing={isRefreshingBooking}
@@ -266,15 +282,23 @@ const HomePage = ({ navigation }: any) => {
                         }}
                     />
                 }
+                ref={scrollRef}
+                onScroll={scrollHandler}
+                scrollEventThrottle={16}
                 showsVerticalScrollIndicator={false}
             >
-                <View style={{ margin: 10 }}>
+                <View>
                     <DropDownActi list={acti} title={t("ACTI")} onClick={(infos) => navigation.navigate("ActiResume", { infos })} />
                     <DropDownProject list={project} title={t("PROJ")} onClick={(infos) => navigation.navigate("ProjectResume", { infos })} />
-                    <DropDownNotes list={notes} title={t("NOTE")} onClick={() => {}} />
-                    <DropDownHisto list={history} title={t("HISTO")} onClick={() => {}} />
+                    <DropDownNotes list={notes} title={t("NOTE")} onClick={(infos) => navigation.navigate("MarkResume", { infos })} />
+                    <DropDownHisto list={history} title={t("HISTO")} onClick={() => { }} />
                 </View>
             </ScrollView>
+            {(isGoToTop && userInfo.goToTop) &&
+                <TouchableOpacity onPress={() => goToTop()} style={{ position: "absolute", right: 30, bottom: 20, backgroundColor: "#1C9FF0", borderRadius: 50, padding: 10 }} >
+                    <AntDesign name="arrowup" size={24} color="white" />
+                </TouchableOpacity>
+            }
             <Modal
                 visible={isLoading}
                 transparent={true}
@@ -289,7 +313,7 @@ const HomePage = ({ navigation }: any) => {
                     </View>
                 </View>
             </Modal>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 
@@ -302,7 +326,7 @@ const styles = StyleSheet.create({
     box: {
         padding: 20,
         alignSelf: "center",
-        width: "95%",
+        width: "97%",
         marginTop: 20,
         backgroundColor: "white",
         alignItems: "center",
@@ -375,8 +399,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         alignItems: "flex-start",
-        marginLeft: 30,
-        marginRight: 30,
+        marginLeft: 20,
+        marginRight: 20,
         marginTop: 10
     },
     spaceBet: {
@@ -386,13 +410,14 @@ const styles = StyleSheet.create({
         borderColor: "black",
         marginLeft: 30,
         marginRight: 30,
+        marginBottom: 10,
         width: "95%"
     },
     boxElem: {
         padding: 20,
         alignSelf: "center",
         width: "100%",
-        marginTop: 10,
+        marginTop: 20,
         backgroundColor: "white",
         alignItems: "flex-start",
         borderRadius: 10,
@@ -401,4 +426,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default HomePage;
+export default observer(HomePage);

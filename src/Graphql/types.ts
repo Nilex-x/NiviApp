@@ -12,8 +12,8 @@ export type Scalars = {
   Float: number;
 };
 
-export type User = {
-  __typename?: 'User';
+export type UserAll = {
+  __typename?: 'UserAll';
   login: Scalars['String'];
   lastname: Scalars['String'];
   firstname: Scalars['String'];
@@ -26,6 +26,13 @@ export type User = {
   scolaryear: Scalars['String'];
   location: Scalars['String'];
   course: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  login: Scalars['String'];
+  lastname: Scalars['String'];
+  firstname: Scalars['String'];
 };
 
 export type Module = {
@@ -53,7 +60,7 @@ export type Student = {
 export type Resp = {
   __typename?: 'Resp';
   title: Scalars['String'];
-  picture: Scalars['String'];
+  picture?: Maybe<Scalars['String']>;
 };
 
 export type Activites = {
@@ -63,6 +70,7 @@ export type Activites = {
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   type_title?: Maybe<Scalars['String']>;
+  type_code?: Maybe<Scalars['String']>;
   end_register?: Maybe<Scalars['String']>;
   deadline?: Maybe<Scalars['String']>;
   end?: Maybe<Scalars['String']>;
@@ -78,14 +86,13 @@ export type ModuleDetail = {
   closed: Scalars['String'];
   opened: Scalars['String'];
   credits: Scalars['Int'];
-  description: Scalars['String'];
-  competence: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   resp: Array<Resp>;
   allow_register?: Maybe<Scalars['String']>;
   color?: Maybe<Scalars['String']>;
-  activites: Array<Activites>;
-  studentRegistered: Array<Maybe<Student>>;
-  file: Array<Scalars['String']>;
+  activites?: Maybe<Array<Activites>>;
+  studentRegistered?: Maybe<Array<Maybe<Student>>>;
+  file?: Maybe<Array<Scalars['String']>>;
 };
 
 export type Projects = {
@@ -249,13 +256,45 @@ export type Modules = {
   open: Scalars['String'];
 };
 
+export type MarkModules = {
+  __typename?: 'MarkModules';
+  scolaryear: Scalars['String'];
+  codemodule: Scalars['String'];
+  codeinstance: Scalars['String'];
+  title: Scalars['String'];
+  date_ins?: Maybe<Scalars['String']>;
+  grade: Scalars['String'];
+  credits: Scalars['Int'];
+};
+
+export type Marks = {
+  __typename?: 'Marks';
+  scolaryear: Scalars['String'];
+  codemodule: Scalars['String'];
+  titlemodule: Scalars['String'];
+  codeinstance: Scalars['String'];
+  codeacti: Scalars['String'];
+  title: Scalars['String'];
+  date: Scalars['String'];
+  correcteur?: Maybe<Scalars['String']>;
+  final_note: Scalars['Float'];
+  comment?: Maybe<Scalars['String']>;
+};
+
+export type MarksReturn = {
+  __typename?: 'MarksReturn';
+  module?: Maybe<Array<MarkModules>>;
+  marks?: Maybe<Array<Marks>>;
+};
+
 export type Query = {
   __typename?: 'Query';
   Login: User;
+  GetMarks: MarksReturn;
   GetAllModule: Array<Maybe<Module>>;
   GetModuleDetail: ModuleDetail;
   GetActiDetail: ActiType;
-  GetUserInfo: User;
+  GetUserInfo: UserAll;
   GetBoard: Board;
   GetProjectDetails: Project;
   GetPlanning: Array<Maybe<Planning>>;
@@ -266,6 +305,13 @@ export type Query = {
 
 export type QueryLoginArgs = {
   KeyAuth: Scalars['String'];
+};
+
+
+export type QueryGetMarksArgs = {
+  KeyAuth: Scalars['String'];
+  scolaryear?: InputMaybe<Scalars['String']>;
+  codeModule?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -320,7 +366,8 @@ export type QueryGetPlanningArgs = {
 export type QueryGetDayEventArgs = {
   KeyAuth: Scalars['String'];
   start: Scalars['String'];
-  end: Scalars['String'];
+  country: Scalars['String'];
+  city: Scalars['String'];
 };
 
 
