@@ -26,6 +26,7 @@ export type UserAll = {
   scolaryear: Scalars['String'];
   location: Scalars['String'];
   course: Scalars['String'];
+  averageLogTime: Scalars['Float'];
 };
 
 export type User = {
@@ -281,16 +282,17 @@ export type Marks = {
   comment?: Maybe<Scalars['String']>;
 };
 
-export type MarksReturn = {
-  __typename?: 'MarksReturn';
-  module?: Maybe<Array<MarkModules>>;
-  marks?: Maybe<Array<Marks>>;
+export type ModuleMarks = {
+  __typename?: 'ModuleMarks';
+  semester: Scalars['String'];
+  notes: Array<Maybe<Marks>>;
+  modules: Array<Maybe<MarkModules>>;
 };
 
 export type Query = {
   __typename?: 'Query';
   Login: User;
-  GetMarks: MarksReturn;
+  GetMarks: Array<Maybe<ModuleMarks>>;
   GetAllModule: Array<Maybe<Module>>;
   GetModuleDetail: ModuleDetail;
   GetActiDetail: ActiType;
@@ -310,8 +312,6 @@ export type QueryLoginArgs = {
 
 export type QueryGetMarksArgs = {
   KeyAuth: Scalars['String'];
-  scolaryear?: InputMaybe<Scalars['String']>;
-  codeModule?: InputMaybe<Scalars['String']>;
 };
 
 

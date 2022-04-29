@@ -35,7 +35,7 @@ const StatusIcon = ({ status }: StatusIconType) => {
 
 const DropDownModule: React.FC<DropMenuType> = ({ list, title, onClick }) => {
 
-    const [isOpen, setOpen] = useState(false)
+    const [isOpen, setOpen] = useState(true)
 
     return (
         <View style={styles.box}>

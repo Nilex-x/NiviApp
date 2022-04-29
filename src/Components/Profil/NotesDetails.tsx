@@ -1,7 +1,7 @@
 import { keys } from 'mobx';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Modal, Linking, ActivityIndicator, RefreshControl, ImageBackground } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Modal, Linking, ActivityIndicator, RefreshControl } from 'react-native';
 import Query from '../../Graphql/Query';
 import RootStore from '../../store/rootStore';
 import RNPickerSelect from 'react-native-picker-select';
@@ -9,7 +9,6 @@ import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ModuleMarks } from '../../Graphql/types';
-import Pie from 'react-native-progress/Pie';
 
 const { userInfo } = RootStore.getInstance();
 
@@ -44,99 +43,49 @@ const StatusIcon = ({ status }: any) => {
     }
 }
 
-const ProfilPage = ({ navigation }: any) => {
+const NotesDetails = (props) => {
     const queries = new Query();
     const { t, i18n } = useTranslation();
-    const [infos, setInfos] = useState<infosUser | any>();
-    const [isRefreshingBooking, setRefreshBooking] = useState<boolean>(false);
-    const [semester, setSemester] = useState<any>([])
-    const [selectSemester, setSelectedSemester] = useState()
-    const [marksValue, setMarkValue] = useState<ModuleMarks | null>(null)
-    const [isLoading, setLoading] = useState(true);
-
-    const getInfo = async () => {
-        setLoading(true);
-        try {
-            const data = await queries.getUserInfo(userInfo.getToken());
-            const dataMarks = await queries.getMarksDate(userInfo.getToken());
-            const infos = data?.data?.GetUserInfo;
-            const ModulesMark: Array<any> | any = dataMarks?.data?.GetMarks
-            setInfos(infos);
-            setSemester(ModulesMark.map(element => ({ label: element.semester, value: element })))
-        } catch (err) {
-            console.log("GraphQl error => ", err);
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    useEffect(() => {
-        getInfo();
-    }, [])
+    const [noteSelected, setNotesSelected] = useState(null)
+    const [isLoading, setLoading] = useState(false);
+    const infos = props.route.params.infos;
+    const notes = props.route.params.notes;
 
     return (
         <SafeAreaView style={{ backgroundColor: "#1C9FF0", width: '100%', height: '100%', flex: 1 }} >
-            <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        refreshing={isRefreshingBooking}
-                        onRefresh={() => {
-                            getInfo().finally(() => setRefreshBooking(false))
-                        }}
-                    />
-                }
-            >
+            <ScrollView>
                 <View style={styles.box}>
-                    <View style={styles.sameLine}>
-                        <Image source={{ uri: infos?.picture }} style={{ width: 150, height: 200, borderRadius: 10 }} />
-                        <View style={styles.betColumn}>
-                            <Text>{t("PROFIL_FIRSTNAME")}: {infos?.firstname}</Text>
-                            <Text>{t("PROFIL_LASTNAME")}: {infos?.lastname}</Text>
-                            <Text>{t("PROFIL_YEAR")}: Tek {infos?.studentyear}</Text>
-                        </View>
-                    </View>
-                </View>
-                <View style={[styles.sameLine, styles.box, { alignItems: "flex-start", justifyContent: "space-around", marginTop: 20 }]}>
-                    <View style={{ width: "35%", height: 150, padding: 10 }}>
-                        <Text style={{ fontSize: 15, marginBottom: 35 }}>{t("PROFIL_CREDIT")}: {infos?.credits}</Text>
-                        <Text style={{ fontSize: 15, marginBottom: 35 }}>G.P.A: {infos?.gpa}</Text>
-                        <Text style={{ fontSize: 15, marginBottom: 35 }}>{t("PROFIL_SEMETER")}: {infos?.semester}</Text>
-                        <Text style={{ fontSize: 15, marginBottom: 35 }}>{t("PROFIL_PROMO")}: {infos?.promo}</Text>
-                    </View>
-                    <View style={{ alignItems: "center" }}>
-                        <Text style={{ marginBottom: 10, fontSize: 20, maxWidth: "70%" }}>{t("PROFIL_TIME_AVERAGE")}</Text>
-                        <Pie progress={infos?.averageLogTime} size={150} unfilledColor="#878787" color="#15E800" borderWidth={0} />
-                    </View>
+                    <Text style={styles.titleInfo}>{infos.title}</Text>
+                    <Text style={styles.titleInfo}>{t("PROFIL_CREDIT")}: {infos.credits}</Text>
                 </View>
                 <View style={styles.box}>
-                    <Text style={[styles.titleInfo, { marginBottom: 10, textDecorationLine: "underline" }]}>{t("PROFIL_MARKS")}</Text>
-                    <View style={[styles.sameLine]}>
-                        <View style={{ width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#F1F1F1", borderRadius: 10, }}>
-                            <RNPickerSelect
-                                placeholder={{ inputLabel: t("PROFIL_SEMETER"), label: t("PROFIL_SEMETER"), value: null }}
-                                onValueChange={(value) => setMarkValue(value)}
-                                items={semester}
-                                style={{ placeholder: styles.selectStyleText, inputIOS: styles.selectStyleText, inputAndroid: styles.selectStyleText }}
-                                value={selectSemester}
-                            />
+                    {notes.length > 0 ?
+                        <View style={{ width: "100%" }}>
+                            <Text style={styles.titleInfo}>{t("PROFIL_DETAIL_ALL_MARKS")}</Text>
+                            {notes.map((note, index) => (
+                                <TouchableOpacity key={index} style={[styles.MarksStyle, { backgroundColor: (noteSelected && index == noteSelected.index) ? "#D4CDCA" : "white", display: "flex", flexDirection: "row", width: "100%" }]} onPress={() => setNotesSelected({ ...note, index })}>
+                                    <Text style={{ maxWidth: "80%" }}>{note.title}</Text>
+                                    <Text>{t("PROFIL_DETAIL_VALUE")}: {note.final_note}</Text>
+                                </TouchableOpacity>
+                            ))}
                         </View>
-                    </View>
-                    <View style={{ marginTop: 10, width: "100%" }}>
-                        {marksValue ?
-                            <View>
-                                {marksValue.modules.map(element => (
-                                    <TouchableOpacity key={element?.title + element?.codeinstance} style={styles.MarksStyle} onPress={(infos) => { navigation.navigate("NotesDetail", { infos: element, notes: marksValue.notes.filter(v1 => v1?.codeinstance == element?.codeinstance && v1?.codemodule == element?.codemodule) }) }}>
-                                        <Text style={{ maxWidth: "70%" }}>{element?.title}</Text>
-                                        <StatusIcon status={element?.grade} />
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                            :
-                            <View style={{ width: "100%" }}>
-                                <Text style={{ alignSelf: "center", fontSize: 17 }}>{t("PROFIL_EMPTY_SEMESTER")}</Text>
-                            </View>
-                        }
-                    </View>
+                        :
+                        <View>
+                            <Text style={{ fontSize: 15, alignSelf: "center" }}>{t("PROFIL_DETAIL_EMPTY")}</Text>
+                        </View>
+                    }
+                </View>
+                <View style={styles.box}>
+                    <Text style={[styles.titleInfo, { marginBottom: 10 }]}>{t("PROFIL_DETAIL_MARK")}</Text>
+                    {noteSelected ?
+                        <View>
+                            <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: "bold" }}>{t("PROFIL_DETAIL_ACTI")}:</Text> {noteSelected.title}</Text>
+                            <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: "bold" }}>{t("PROFIL_DETAIL_VALUE")}:</Text> {noteSelected.final_note}</Text>
+                            <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: "bold" }}>{t("PROFIL_DETAIL_COMMENT")}:</Text>{"\n"}{noteSelected.comment}</Text>
+                        </View>
+                        :
+                        <Text style={{ fontSize: 15, alignSelf: "center" }}>{t("PROFIL_DETAIL_EMPTY_SELECT")}</Text>
+                    }
                 </View>
             </ScrollView>
             <Modal
@@ -283,4 +232,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ProfilPage;
+export default NotesDetails;

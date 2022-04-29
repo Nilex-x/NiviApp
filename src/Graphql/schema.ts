@@ -32,6 +32,7 @@ export const GET_USER_INFO = gql`
     promo
     scolaryear
     location
+    averageLogTime
   }
 }`
 
@@ -293,11 +294,29 @@ query GetModules($keyAuth: String!) {
 `
 
 export const GET_MARKS_DATE = gql`
-query GetMarks($keyAuth: String!, $scolaryear: String, $codeModule: String) {
-  GetMarks(KeyAuth: $keyAuth, scolaryear: $scolaryear, codeModule: $codeModule) {
-    module {
+query GetMarks($keyAuth: String!) {
+  GetMarks(KeyAuth: $keyAuth) {
+    semester
+    notes {
       scolaryear
+      codemodule
+      titlemodule
+      codeinstance
+      codeacti
       title
+      date
+      correcteur
+      final_note
+      comment
+    }
+    modules {
+      scolaryear
+      codemodule
+      codeinstance
+      title
+      date_ins
+      grade
+      credits
     }
   }
 }`

@@ -1,10 +1,12 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import { useTranslation } from "react-i18next";import ProfilPage from "./Profil";
+import { useTranslation } from "react-i18next";import NotesDetails from "./NotesDetails";
+import ProfilPage from "./Profil";
 ;
 
 type ProfilParamList = {
     Profil: undefined;
+    NotesDetail: undefined;
 };
 
 const Stack = createNativeStackNavigator<ProfilParamList>();
@@ -20,6 +22,20 @@ const ProfilStack: React.FC<BookingStackProps> = () => {
         component={ProfilPage}
         options={{
           title: t("HEADER_PROFIL"),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#1C9FF0",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="NotesDetail"
+        component={NotesDetails}
+        options={{
+          title: t("HEADER_PROFIL_MARKS"),
           headerStyle: {
             backgroundColor: "#fff",
           },

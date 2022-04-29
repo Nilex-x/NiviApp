@@ -18,15 +18,15 @@ const AgendaPage = () => {
 
     const getColor = (title: string) => {
         if (title == "other")
-            return "#008ADF"
+            return "#0078C2"
         if (title == "exam")
-            return "#dd9473"
+            return "#E97039"
         if (title == "rdv")
-            return "#e2aa55"
+            return "#DB9934"
         if (title == "tp")
-            return "#a48cbb"
+            return "#9258C8"
         if (title == "class")
-            return "#28ABFB"
+            return "#0091EB"
     }
 
     const getEvent = (planning: Array<Planning>, date: String) => { // [titlemodule] >> [acti_title] [salle] ([total_students_registered]/[nb_seat])
@@ -68,14 +68,14 @@ const AgendaPage = () => {
     }
 
     const DisplayEvents = ({ event }) => {
-        const pourcentWidth = 100 / event.length;
+        const pourcentWidth = 99 / event.length;
 
         return (
-            <View style={{ width: "85%", display: "flex", flexDirection: "row", justifyContent: "flex-start" }}>
-                {event.map(element => {
-                    const pourcentHeigth = element.end_minute == 0 ? 100 : 100 / (60 / element.end_minute);
+            <View style={{ width: "82%", display: "flex", flexDirection: "row", justifyContent: "flex-start" }}>
+                {event.map((element, index) => {
+                    const pourcentHeigth = element.end_minute == 0 ? 98 : 100 / (60 / element.end_minute);
                     return (
-                        <View style={{ margin: 1, backgroundColor: element.color, width: `${pourcentWidth}%`, height: `${pourcentHeigth}%`, flexShrink: 10, alignItems: "center", borderRadius: 10 }}>
+                        <View key={index} style={{ margin: 2, backgroundColor: element.color, width: `${pourcentWidth}%`, height: `${pourcentHeigth}%`, alignItems: "center" }}>
                             <Text style={{ color: "white", width: "85%" }}>{element.title}</Text>
                         </View>
                     )
@@ -89,20 +89,20 @@ const AgendaPage = () => {
     }, [dateSelected])
 
     return (
-        <SafeAreaView style={{ width: '100%', height: '100%', flex: 1, backgroundColor: "#084681" }}>
+        <SafeAreaView style={{ width: '100%', height: '100%', flex: 1, backgroundColor: "#EAEAEA" }}>
             <View style={{ padding: 8, marginBottom: 3, borderBottomRightRadius: 100, borderBottomLeftRadius: 100, display: "flex", flexDirection: "row", justifyContent: "space-around", backgroundColor: "white" }}>
-                <Entypo name="arrow-with-circle-left" size={30} color="#FF6100" onPress={() => setDateSelected(DateTime.fromISO(dateSelected).minus({ days: 1 }).toISO())} />
+                <Entypo name="arrow-with-circle-left" size={30} color="#FF6100" />
                 <View style={{ alignItems: "center", justifyContent: "center" }}>
-                    <Text>{DateTime.fromISO(dateSelected).setLocale('fr').toFormat("dd LLLL yyyy")}</Text>
+                    <Text>{DateTime.fromISO(dateSelected).setLocale(i18n.language).toFormat("cccc dd LLLL yyyy")}</Text>
                 </View>
                 <Entypo name="arrow-with-circle-right" size={30} color="#FF6100" onPress={() => setDateSelected(DateTime.fromISO(dateSelected).plus({ days: 1 }).toISO())} />
             </View>
             <ScrollView>
                 <View style={{ display: "flex", width: "100%" }}>
                     {Events.map((element, index) => (
-                        <View key={element.title + element.hour + index} style={{ flexDirection: "row", height: 200, borderColor: "white", borderTopWidth: 1, borderBottomWidth: (index + 1 == Events.length) ? 1 : 0 }}>
-                            <View style={{ width: "15%", alignItems: "center", borderRightWidth: 1, borderColor: "white" }}>
-                                <Text style={{ fontSize: 20, color: "white" }}>{DateTime.fromISO(element.hour).hour} h</Text>
+                        <View key={element.title + element.hour + index} style={{ flexDirection: "row", height: 200, borderTopWidth: 1, borderBottomWidth: (index + 1 == Events.length) ? 1 : 0 }}>
+                            <View style={{ width: "15%", alignItems: "center", borderRightWidth: 1 }}>
+                                <Text style={{ fontSize: 20 }}>{DateTime.fromISO(element.hour).hour} h</Text>
                             </View>
                             <DisplayEvents event={element.event} />
                         </View>

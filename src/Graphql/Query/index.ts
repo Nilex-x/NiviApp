@@ -1,6 +1,6 @@
 import GQLClient from "../GraphqlConfig";
 import { GET_ACTI_DETAIL, GET_ALL_MODULE, GET_BOARD, GET_DAY_EVENT, GET_MARKS_DATE, GET_MODULES, GET_MODULE_DETAIL, GET_PLANNING, GET_PROJECT_DETAILS, GET_USER_INFO, LOGIN_USER } from "../schema";
-import { User, Board, Planning, ModuleDetail, ActiType, Module, Project, Modules, UserAll, MarksReturn } from "../types";
+import { User, Board, Planning, ModuleDetail, ActiType, Module, Project, Modules, UserAll, ModuleMarks } from "../types";
 
 export default class Query {
     client = GQLClient.getIntance()?.getClient()
@@ -129,7 +129,7 @@ export default class Query {
 
     getMarksDate(keyAuth: string) {
         return this.client
-        .query<{GetMarks: MarksReturn }>({
+        .query<{GetMarks: ModuleMarks }>({
             query: GET_MARKS_DATE,
             variables: {
                 keyAuth

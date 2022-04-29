@@ -15,6 +15,7 @@ export type base = {
     HEADER_HOME_ACTI: string;
     HEADER_HOME_PROJ: string;
     HEADER_HOME_MARK: string;
+    HEADER_PROFIL_MARKS: string;
 
     // Acti
     ACTI_AT: string;
@@ -43,9 +44,21 @@ export type base = {
     PROFIL_CREDIT: string;
     PROFIL_SEMETER: string;
     PROFIL_PROMO: string;
+    PROFIL_EMPTY_SEMESTER: string;
+    PROFIL_MARKS: string;
+    PROFIL_TIME_AVERAGE: string;
+    PROFIL_DETAIL_ALL_MARKS: string;
+    PROFIL_DETAIL_MARK: string;
+    PROFIL_DETAIL_COMMENT: string;
+    PROFIL_DETAIL_ACTI: string;
+    PROFIL_DETAIL_VALUE: string;
+    PROFIL_DETAIL_EMPTY: string;
+    PROFIL_DETAIL_EMPTY_SELECT: string;
 
     // Setting
+    ACCESSIBILITY: string;
     DECONNECT: string;
+    GOTOTOP: string;
 
     // utils
     FR: string;

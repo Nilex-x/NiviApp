@@ -46,14 +46,14 @@ const SettingPage = () => {
                     />
                 </View>
                 <View style={styles.box}>
-                    <Text style={{ fontSize: 18, marginBottom: 10, textDecorationLine: "underline" }}>Accessibilité</Text>
+                    <Text style={{ fontSize: 18, marginBottom: 10, textDecorationLine: "underline" }}>{t("ACCESSIBILITY")}</Text>
                     <View style={styles.spaceBet}>
                         <Checkbox.Android
                             status={isChecked ? 'checked' : 'unchecked'}
                             onPress={() => setChecked(!isChecked)}
                             color="#1C9FF0"
                         />
-                        <Text>Got To Top Home Page</Text>
+                        <Text>{t("GOTOTOP")}</Text>
                     </View>
                 </View>
                 <View style={styles.box}>
