@@ -12,6 +12,7 @@ import format from 'date-fns/format';
 import { t } from 'i18next';
 import { useScrollToTop } from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
+import { DateTime } from 'luxon';
 
 interface DropMenuType {
     list: Array<any>,
@@ -101,12 +102,14 @@ const DropDownProject: React.FC<DropMenuType> = ({ list, title, onClick }) => {
                 >
                     <View style={styles.containerDrop}>
                         {list.length > 0 ?
-                            list.map(element =>
+                            list.map(element => {
+                                console.log(element);
+                                return (
                                 <TouchableOpacity key={element.title + element.text} style={styles.boxElem} onPress={() => onClick(element)} >
                                     <Text style={{ marginBottom: 10 }}><Text style={{ fontSize: 15, fontWeight: "bold" }}>Title: </Text>{element.title}</Text>
-                                    <Progress.Bar progress={0.3} width={200} />
+                                    <Progress.Bar progress={element.timeline_barre / 100} width={200} />
                                 </TouchableOpacity>
-                            )
+                            )})
                             :
                             <View style={styles.boxElem} >
                                 <Text>

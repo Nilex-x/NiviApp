@@ -91,7 +91,7 @@ const AgendaPage = () => {
     return (
         <SafeAreaView style={{ width: '100%', height: '100%', flex: 1, backgroundColor: "#EAEAEA" }}>
             <View style={{ padding: 8, marginBottom: 3, borderBottomRightRadius: 100, borderBottomLeftRadius: 100, display: "flex", flexDirection: "row", justifyContent: "space-around", backgroundColor: "white" }}>
-                <Entypo name="arrow-with-circle-left" size={30} color="#FF6100" />
+                <Entypo name="arrow-with-circle-left" size={30} color="#FF6100" onPress={() => setDateSelected(DateTime.fromISO(dateSelected).minus({ days: 1 }).toISO())}/>
                 <View style={{ alignItems: "center", justifyContent: "center" }}>
                     <Text>{DateTime.fromISO(dateSelected).setLocale(i18n.language).toFormat("cccc dd LLLL yyyy")}</Text>
                 </View>
